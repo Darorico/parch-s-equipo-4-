@@ -11,8 +11,21 @@ config_version=5
 [application]
 
 config/name="Parchiss"
+config/description="Parchís multijugador web - caso de uso Ejercer turno del juego (MVC + Observer + Fachada/Mock)"
+run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.5", "GL Compatibility")
 config/icon="res://icon.svg"
+
+[autoload]
+
+Red="*res://controllers/red.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=760
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
 
 [rendering]
 
