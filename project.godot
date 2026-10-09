@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 [autoload]
 
 Red="*res://controllers/red.gd"
+Sonidos="*res://views/fx/gestor_sonidos.gd"
+Animaciones="*res://views/fx/gestor_animaciones.gd"
 
 [display]
 
@@ -26,6 +28,10 @@ window/size/viewport_width=1280
 window/size/viewport_height=760
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
+
+[gui]
+
+theme/custom_font="res://assets/fuentes/Pangolin-Regular.ttf"
 
 [rendering]
 
