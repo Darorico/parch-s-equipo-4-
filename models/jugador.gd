@@ -2,9 +2,10 @@ class_name Jugador
 extends RefCounted
 ## Jugador registrado en la partida (CU01): nombre, color, avatar y sus cuatro fichas.
 
-## Colores en sentido horario sobre el tablero: verde (arriba-izq), amarillo (arriba-der),
-## azul (abajo-der) y rojo (abajo-izq). Este también es el orden de los turnos.
-const COLORES: Array[String] = ["verde", "amarillo", "azul", "rojo"]
+## Colores en sentido horario sobre el tablero: rojo (arriba-izq), verde (arriba-der),
+## amarillo (abajo-der) y azul (abajo-izq). Es el orden de los turnos (horario, como pide el PDF);
+## las fichas, en cambio, avanzan en sentido antihorario.
+const COLORES: Array[String] = ["rojo", "verde", "amarillo", "azul"]
 const FICHAS_POR_JUGADOR := 4
 
 var id: int

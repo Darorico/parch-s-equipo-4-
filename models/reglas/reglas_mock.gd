@@ -5,7 +5,8 @@ extends RefCounted
 ##   - generar_valor(): número aleatorio del 1 al 6.
 ##   - Con un 5: «Sacar ficha de la casa» (posicionar_en_salida), con mensaje de éxito.
 ##   - Con cualquier número: «Ficha movida N casillas» (actualizar_posicion).
-##   - Captura simple: si cae sobre una ficha rival fuera de una salida, la manda a su casa.
+##   - Las fichas avanzan en sentido ANTIHORARIO por un recorrido de 68 casillas.
+##   - Captura simple: si cae sobre una ficha rival fuera de una casilla segura, la manda a su casa.
 ##   - Fin de turno: con un 6 se vuelve a tirar (máximo 3 tiros seguidos); si no, el turno pasa.
 ## No simula barreras, el pasillo de meta ni la victoria por meta (eso es del motor real).
 
@@ -15,8 +16,10 @@ const VALOR_PARA_SALIR := 5
 const VALOR_REPETIR := 6
 const MAX_TIROS_SEGUIDOS := 3
 const REPETIR_CON_SEIS := true
-## Casilla de salida de cada color (índice en el recorrido de 68 casillas).
-const SALIDAS := {"verde": 4, "amarillo": 21, "azul": 38, "rojo": 55}
+## Casilla de salida de cada color (índice en el recorrido de 68 casillas, que avanza en sentido antihorario).
+const SALIDAS := {"rojo": 4, "azul": 21, "amarillo": 38, "verde": 55}
+## Casillas seguras (no se puede capturar en ellas): las salidas y las grises del tablero.
+const SEGUROS := [4, 11, 16, 21, 28, 33, 38, 45, 50, 55, 62, 67]
 
 var _rng := RandomNumberGenerator.new()
 ## Valores forzados del dado (solo para grabar demos reproducibles: `-- --dados=5,3,6,2`).
@@ -74,7 +77,7 @@ func actualizar_posicion(jugador_id: int, ficha_id: int, valor: int) -> Dictiona
 		return _fallo("Esa ficha no se puede mover.")
 	var destino: int = (casillas[indice] + valor) % CASILLAS_RECORRIDO
 	casillas[indice] = destino
-	var texto := "Ficha %d movida %d casillas." % [ficha_id, valor]
+	var texto := "Ficha %d movida %d %s." % [ficha_id, valor, "casilla" if valor == 1 else "casillas"]
 	var capturada := enviar_ficha_a_base(jugador_id, destino)
 	if capturada != "":
 		texto += " ¡Capturó una ficha %s, que regresa a su casa!" % capturada
@@ -83,8 +86,8 @@ func actualizar_posicion(jugador_id: int, ficha_id: int, valor: int) -> Dictiona
 
 ## Simula CU07 Capturar Ficha. Devuelve el color capturado o "" si no hubo captura.
 func enviar_ficha_a_base(jugador_id: int, casilla: int) -> String:
-	if casilla in SALIDAS.values():
-		return ""  # Las salidas son casillas seguras.
+	if casilla in SEGUROS:
+		return ""
 	for otro: int in _casillas:
 		if otro == jugador_id:
 			continue
