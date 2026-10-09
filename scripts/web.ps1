@@ -13,4 +13,4 @@ Write-Host "   http://localhost:$Puerto"
 Get-NetIPAddress -AddressFamily IPv4 |
     Where-Object { $_.IPAddress -notlike "127.*" -and $_.IPAddress -notlike "169.254.*" } |
     ForEach-Object { Write-Host ("   http://{0}:{1}   ({2})" -f $_.IPAddress, $Puerto, $_.InterfaceAlias) }
-python -m http.server $Puerto --bind 0.0.0.0 --directory $web
+python (Join-Path $PSScriptRoot "servidor_web.py") $web $Puerto
