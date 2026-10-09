@@ -33,6 +33,11 @@ func opciones(jugador_id: int, valor: int) -> Dictionary:
 	}
 
 
+## Jugada obligada que se hace sola ({"accion": "liberar"} o {"accion": "mover", "ficha": n}), o {}.
+func accion_automatica(jugador_id: int, valor: int) -> Dictionary:
+	return _subsistema.accion_automatica(jugador_id, valor)
+
+
 ## CU05 Liberar Ficha. Devuelve {ok, ficha_id, mensaje, posiciones}.
 func liberar_ficha(jugador_id: int, valor: int) -> Dictionary:
 	return _subsistema.posicionar_en_salida(jugador_id, valor)

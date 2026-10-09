@@ -8,6 +8,9 @@ extends RefCounted
 ##   - Las fichas avanzan en sentido ANTIHORARIO por un recorrido de 68 casillas.
 ##   - Captura simple: si cae sobre una ficha rival fuera de una casilla segura, la manda a su casa.
 ##   - Fin de turno: con un 6 se vuelve a tirar (máximo 3 tiros seguidos); si no, el turno pasa.
+##   - Movimientos automáticos (cuando solo hay una jugada posible):
+##       · todas las fichas en casa y sale 5 → la ficha 1 sale sola;
+##       · una sola ficha fuera de casa y sale otro número → esa ficha se mueve sola.
 ## No simula barreras, el pasillo de meta ni la victoria por meta (eso es del motor real).
 
 const CASILLAS_RECORRIDO := 68
@@ -58,6 +61,19 @@ func fichas_movibles(jugador_id: int, _valor: int) -> Array:
 		if casillas[i] != EN_CASA:
 			movibles.append(i + 1)
 	return movibles
+
+
+## Si la jugada es obligada, la devuelve para que se haga sola: {"accion": "liberar"} o
+## {"accion": "mover", "ficha": n}. Si el jugador tiene que elegir, devuelve {}.
+func accion_automatica(jugador_id: int, valor: int) -> Dictionary:
+	var casillas: Array = _casillas.get(jugador_id, [])
+	var en_casa := casillas.count(EN_CASA)
+	var fuera := fichas_movibles(jugador_id, valor)
+	if valor == VALOR_PARA_SALIR and en_casa == casillas.size() and en_casa > 0:
+		return {"accion": "liberar"}
+	if valor != VALOR_PARA_SALIR and fuera.size() == 1:
+		return {"accion": "mover", "ficha": fuera[0]}
+	return {}
 
 
 ## Simula «Sacar ficha de la casa»: la primera ficha en casa pasa a la salida de su color.

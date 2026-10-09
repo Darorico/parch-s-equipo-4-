@@ -41,6 +41,8 @@ var turno := Turno.new()
 var dado := Dado.new()
 ## Solo se usa en el servidor.
 var fachada: FachadaReglas
+## Marca la jugada en curso como automática (solo para el texto del mensaje).
+var _jugada_automatica := false
 
 var turno_actual: int:
 	get:
@@ -117,6 +119,17 @@ func lanzar_dado(jugador_id: int) -> String:
 
 	var opciones := fachada.opciones(jugador_id, valor)
 	var movibles: Array = opciones.movibles
+	var automatica := fachada.accion_automatica(jugador_id, valor)
+	if not automatica.is_empty():
+		# Solo hay una jugada posible: se hace sola, sin pedirle al jugador que elija.
+		turno.fase = Turno.Fase.ELEGIR_FICHA
+		_jugada_automatica = true
+		if automatica.accion == "liberar":
+			error = liberar_ficha(jugador_id)
+		else:
+			error = mover_ficha(jugador_id, automatica.ficha)
+		_jugada_automatica = false
+		return error
 	if movibles.is_empty() and not opciones.puede_liberar:
 		_notificar(&"mensaje", ["%s sacó %d y no tiene fichas que mover (necesita un 5 para sacar una de casa)." % [_nombre(jugador_id), valor]])
 		_finalizar_accion(jugador_id)
@@ -219,7 +232,8 @@ func _aplicar_resultado(jugador_id: int, resultado: Dictionary) -> String:
 		return resultado.mensaje
 	_actualizar_posiciones(resultado.posiciones)
 	_notificar(&"ficha_movida", [jugador_id, resultado.ficha_id, resultado.posiciones])
-	_notificar(&"mensaje", ["%s: %s" % [_nombre(jugador_id), resultado.mensaje]])
+	var sufijo := " (automático)" if _jugada_automatica else ""
+	_notificar(&"mensaje", ["%s: %s%s" % [_nombre(jugador_id), resultado.mensaje, sufijo]])
 	_finalizar_accion(jugador_id)
 	return ""
 
