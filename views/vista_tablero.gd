@@ -68,7 +68,7 @@ func _init() -> void:
 	cuerpo.add_child(columna_acciones)
 
 
-## `jugadores` y `orden` son los datos que trajo la señal partida_iniciada.
+## `jugadores` son los datos que trajo la señal partida_iniciada.
 func configurar(partida: Partida, controlador: ControladorTurno, mi_id: int, jugadores: Array) -> void:
 	_mi_id = mi_id
 	panel_acciones.configurar(controlador)
