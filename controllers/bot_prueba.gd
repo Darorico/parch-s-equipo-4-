@@ -65,7 +65,7 @@ func capturar(nombre: String) -> void:
 	if _carpeta_capturas == "":
 		await get_tree().create_timer(0.2).timeout
 		return
-	await get_tree().create_timer(1.2).timeout
+	await get_tree().create_timer(2.5).timeout
 	var imagen := get_viewport().get_texture().get_image()
 	imagen.save_png("%s/%d_%02d_%s.png" % [_carpeta_capturas, Red.mi_id(), _capturas, nombre])
 	_capturas += 1

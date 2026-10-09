@@ -103,7 +103,7 @@ func _mostrar_opciones(jugador_id: int, movibles: Array, puede_liberar: bool) ->
 	if jugador_id != _mi_id:
 		return
 	Estilo.cambiar_encabezado(_encabezado, "04", "SELECCIÓN DE FICHA", "Elige una ficha válida",
-			"Con un 5 puedes liberar una ficha de tu casa; si no, elige qué ficha mover.")
+			"Haz clic en una ficha resaltada del tablero. Con un 5 también puedes liberar una de tu casa.")
 	_movibles = movibles
 	tablero.resaltar(jugador_id, movibles)
 	panel_acciones.mostrar_opciones(movibles, puede_liberar)
@@ -117,8 +117,7 @@ func _mostrar_movimiento(posiciones: Dictionary) -> float:
 
 
 func _mostrar_fin(ganador_id: int, motivo: String) -> void:
-	panel_acciones.mostrar_turno(false, _nombre(ganador_id))
-	panel_acciones.boton_lanzar.text = "Partida terminada"
+	panel_acciones.terminar_partida()
 	var columna := VBoxContainer.new()
 	columna.custom_minimum_size.x = 380
 	columna.add_theme_constant_override("separation", 12)

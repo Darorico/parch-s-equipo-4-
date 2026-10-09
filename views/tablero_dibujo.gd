@@ -125,14 +125,26 @@ func resaltar(jugador_id: int, movibles: Array, seleccionada := 0) -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		# Manita sobre las fichas que se pueden elegir.
+		var sobre_ficha := _ficha_en((event as InputEventMouseMotion).position) != 0
+		mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if sobre_ficha else Control.CURSOR_ARROW
+		return
 	var clic := event as InputEventMouseButton
 	if clic == null or not clic.pressed or clic.button_index != MOUSE_BUTTON_LEFT:
 		return
+	var ficha := _ficha_en(clic.position)
+	if ficha != 0:
+		ficha_clicada.emit(ficha)
+		accept_event()
+
+
+## Ficha resaltada que está bajo el punto (0 si ninguna).
+func _ficha_en(punto: Vector2) -> int:
 	for zona: Dictionary in _zonas_clic:
-		if clic.position.distance_to(zona.centro) <= zona.radio * 1.3:
-			ficha_clicada.emit(zona.ficha)
-			accept_event()
-			return
+		if punto.distance_to(zona.centro) <= zona.radio * 1.3:
+			return zona.ficha
+	return 0
 
 
 # ---------------------------------------------------------------------------
