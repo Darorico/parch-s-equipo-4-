@@ -107,6 +107,10 @@ func _url_por_defecto() -> String:
 		return _args.url
 	if OS.has_feature("web"):
 		# En el navegador, el servidor de juego suele estar en el mismo equipo que sirve la página.
+		var protocolo = JavaScriptBridge.eval("window.location.protocol")
+		if protocolo == "https:":
+			# Detrás de HTTPS (tailscale serve) el WebSocket va por el mismo dominio, en la ruta /ws.
+			return "wss://%s/ws" % JavaScriptBridge.eval("window.location.host")
 		var host = JavaScriptBridge.eval("window.location.hostname")
 		if host is String and host != "":
 			return "ws://%s:%d" % [host, Red.PUERTO]

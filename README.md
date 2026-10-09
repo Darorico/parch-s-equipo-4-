@@ -78,17 +78,21 @@ Si PowerShell no deja ejecutar scripts, córrelos así: `powershell -ExecutionPo
    ```powershell
    .\scripts\web.ps1
    ```
-4. Cada jugador abre `http://<IP-del-anfitrión>:8000` en su navegador. El campo «Servidor» ya viene lleno con
-   `ws://<IP-del-anfitrión>:9080`.
+4. **Publicar por HTTPS.** La versión Web de Godot 4 **solo arranca en `https://` o en `localhost`**; por
+   `http://IP:8000` sale el error *«Secure Context - use HTTPS»*. Con Tailscale es gratis:
+   - Una sola vez: en https://login.tailscale.com/admin/dns activa **HTTPS Certificates**.
+   - Ejecuta `.\scripts\publicar_tailscale.ps1`. Te muestra la dirección, por ejemplo
+     `https://desktop-xxxx.tailXXXX.ts.net`.
+5. Cada jugador abre esa dirección `https://…ts.net` en su navegador. El campo «Servidor» se llena solo con
+   `wss://…ts.net/ws`.
 
-**Si tu amigo no está en tu misma red, usen Tailscale.** Los dos instalan Tailscale y entran a la misma tailnet
-(o compartes tu equipo con él desde el panel de Tailscale). Él usa tu IP de Tailscale (`100.x.y.z`, la ves con
-`tailscale ip -4`):
-`http://100.x.y.z:8000` y `ws://100.x.y.z:9080`.
+En tu propio equipo también puedes jugar en `http://localhost:8000`, porque `localhost` cuenta como seguro.
 
-> La primera vez, Windows puede pedir permiso en el firewall para *Godot* y *Python*: acepta para redes privadas.
-> La página se sirve por `http://`, así que el navegador permite `ws://`. Si algún día se publica en un sitio
-> `https://` (itch.io, GitHub Pages), el servidor tendrá que ser `wss://`, por ejemplo con un Cloudflare Tunnel.
+**Tu amigo tiene que estar en tu red de Tailscale.** Instala Tailscale y acepta la invitación que le mandas
+desde el panel (*Machines → tu PC → ⋯ → Share*).
+
+> Para dejar de publicar: `tailscale serve reset`. La primera vez, Windows puede pedir permiso en el firewall
+> para *Godot* y *Python*.
 
 ### Demo reproducible para el video
 
