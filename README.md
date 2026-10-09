@@ -117,7 +117,7 @@ fichas fuera), el primero saca 3 y mueve su ficha, etc.
 1. Arrancar el servidor (`servidor.ps1`) y mostrar la consola escuchando en el puerto 9080.
 2. Abrir el juego en dos navegadores o equipos: **Pantalla 01**. Cada uno se registra con nombre, color y avatar.
 3. **Pantalla 02**: aparecen los dos jugadores; cada uno pulsa «Listo» y la partida arranca sola.
-4. **Pantalla 03**: se resalta al jugador que eligió el sistema. Solo él tiene activo «Lanzar dado».
+4. **Pantalla 03**: se resalta al jugador que eligió el sistema. Solo a él se le resalta el dado para lanzarlo con un clic.
 5. Lanza el dado: el dado se anima **en las dos pantallas** (Observer + CU09).
 6. **Pantalla 04**: si sacó 5, «Liberar ficha»; si tiene fichas fuera, elige una ficha y «Mover ficha».
 7. La bitácora muestra el mensaje del Mock y el turno pasa al otro jugador, resaltado en ambas pantallas.

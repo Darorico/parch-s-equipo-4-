@@ -18,7 +18,7 @@ En el panel **Sistema de archivos** (abajo a la izquierda) entra a `res://views/
 | `vista_sala_espera.tscn` | 02 Sala de espera | Lista de jugadores, resumen, botón LISTO y reglas |
 | `vista_tablero.tscn` | 03/04 Tablero | **El tablero**, el panel de jugadores y el panel de acciones |
 | `panel_jugadores.tscn` | Panel «Jugadores» | Título, lista y caja «Turno de…» |
-| `panel_acciones.tscn` | Panel del turno | Dado, «Lanzar dado», fichas 1 a 4, «Liberar» y «Mover» |
+| `panel_acciones.tscn` | Panel del turno | Dado (se lanza con clic), «Liberar ficha» y «Mover ficha» (solo con 5) y línea de resultado |
 | `fila_jugador.tscn` | Una fila de jugador | Avatar, nombre, detalle y etiqueta (LISTO / TURNO) |
 
 `main.tscn` sigue vacía a propósito: solo arranca el juego y va cargando estas escenas.
@@ -37,13 +37,13 @@ VistaTablero            (Control con el script vista_tablero.gd)
 ├─ Decoraciones         estrellas, espirales y crayón de las orillas
 └─ Contenido            márgenes de la pantalla
    └─ Columna
-      ├─ %Encabezado    número, sección, título rojo y logo
-      └─ Cuerpo
-         ├─ %Tablero    ← EL TABLERO (TableroDibujo)
-         └─ Lateral (scroll)
-            └─ Paneles
-               ├─ %PanelJugadores   (escena panel_jugadores.tscn)
-               └─ %PanelAcciones    (escena panel_acciones.tscn)
+	  ├─ %Encabezado    número, sección, título rojo y logo
+	  └─ Cuerpo
+		 ├─ %Tablero    ← EL TABLERO (TableroDibujo)
+		 └─ Lateral (scroll)
+			└─ Paneles
+			   ├─ %PanelJugadores   (escena panel_jugadores.tscn)
+			   └─ %PanelAcciones    (escena panel_acciones.tscn)
 ```
 
 Las otras pantallas siguen el mismo patrón: **Papel → Decoraciones → Contenido → Columna →** tarjetas.
@@ -51,7 +51,7 @@ Las otras pantallas siguen el mismo patrón: **Papel → Decoraciones → Conten
 ### ⚠️ Los nodos con `%`
 
 Los nodos marcados con **%** (icono de porcentaje junto al nombre) son los que el código busca por nombre,
-por ejemplo `%Tablero`, `%BotonLanzar` o `%Nombre`.
+por ejemplo `%Tablero`, `%Dado`, `%BotonLiberar` o `%Nombre`.
 
 - ✅ Puedes **moverlos, cambiarles tamaño, color, texto, fuente y márgenes**.
 - ❌ **No los renombres ni los borres**, porque el juego dejaría de encontrarlos y marcaría error.
@@ -111,7 +111,7 @@ ahora 370) o los márgenes de **Contenido** (*Theme Overrides → Constants*).
 **editor de temas** en el panel inferior. Lo que cambies ahí se aplica a todas las pantallas:
 
 - **Button:** botones normales (estados normal, hover, pressed y disabled).
-- **BotonPrimario:** botones azules con letra amarilla («LANZAR DADO», «LISTO»…).
+- **BotonPrimario:** botones azules con letra amarilla («MOVER FICHA», «LISTO»…).
 - **PanelContainer:** recuadros de lápiz de las tarjetas.
 - **LineEdit:** campos de texto.
 - **Label:** color de texto por defecto.

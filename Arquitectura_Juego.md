@@ -14,19 +14,19 @@ Para editar el diseño con el ratón en el editor de Godot, consulta [`Guia_Edit
 ## 1. Vista general
 
 ```
-                       ┌──────────────────────────── EQUIPO DEL JUGADOR (cliente) ─────────────────────────────┐
+					   ┌──────────────────────────── EQUIPO DEL JUGADOR (cliente) ─────────────────────────────┐
   clic ──▶  VISTA (views/)  ──acción──▶  CONTROLADOR (controllers/)  ──▶  Red  ══ WebSocket ══╗
-             ▲                                                                                  ║
-             │ señales (Observer)                                                               ║
-             │                                                                                  ║
-          Partida (réplica)  ◀── aplicar_evento() ◀── Red ◀════════ evento replicado (CU09) ═════╣
-                       └─────────────────────────────────────────────────────────────────────────║──────────┘
-                                                                                                  ║
-                       ┌──────────────────────────────── SERVIDOR ─────────────────────────────── ║ ─────────┐
-                       │   Red ──▶ Partida (modelo autoritativo) ──▶ FachadaReglas ──▶ ReglasMock ◀╝          │
-                       │              │ evento_emitido                                                       │
-                       │              └──────────────▶ Red ═══ reenvía a todos los clientes ═══▶            │
-                       └──────────────────────────────────────────────────────────────────────────────────────┘
+			 ▲                                                                                  ║
+			 │ señales (Observer)                                                               ║
+			 │                                                                                  ║
+		  Partida (réplica)  ◀── aplicar_evento() ◀── Red ◀════════ evento replicado (CU09) ═════╣
+					   └─────────────────────────────────────────────────────────────────────────║──────────┘
+																								  ║
+					   ┌──────────────────────────────── SERVIDOR ─────────────────────────────── ║ ─────────┐
+					   │   Red ──▶ Partida (modelo autoritativo) ──▶ FachadaReglas ──▶ ReglasMock ◀╝          │
+					   │              │ evento_emitido                                                       │
+					   │              └──────────────▶ Red ═══ reenvía a todos los clientes ═══▶            │
+					   └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 Regla de oro: **la Vista nunca le pregunta nada al Modelo.** Solo escucha sus señales y repinta con los
@@ -71,13 +71,13 @@ views/                         VISTA (una por pantalla del storyboard)
   avatar_icono.gd              Avatar del jugador (círculo de color con una figura)
   estilo.gd                    Paleta de crayones, fuente Pangolin y piezas que se crean por código
   fx/                          Servicios de presentación (estilo «cuaderno escolar»)
-    garabato.gd                Primitivas de dibujo a mano: líneas temblorosas y relleno de crayón
-    stylebox_crayon.gd         StyleBox dibujado a mano (paneles, botones, campos de texto)
-    papel.gdshader             Shader de papel blanco arrugado y doblado
-    fondo_papel.gd             Rectángulo de fondo que usa ese shader
-    decoraciones.gd            Garabatos de los márgenes (estrellas, espirales, crayón)
-    gestor_sonidos.gd          Autoload «Sonidos»: efectos de sonido
-    gestor_animaciones.gd      Autoload «Animaciones»: ritmo stop-motion y transiciones
+	garabato.gd                Primitivas de dibujo a mano: líneas temblorosas y relleno de crayón
+	stylebox_crayon.gd         StyleBox dibujado a mano (paneles, botones, campos de texto)
+	papel.gdshader             Shader de papel blanco arrugado y doblado
+	fondo_papel.gd             Rectángulo de fondo que usa ese shader
+	decoraciones.gd            Garabatos de los márgenes (estrellas, espirales, crayón)
+	gestor_sonidos.gd          Autoload «Sonidos»: efectos de sonido
+	gestor_animaciones.gd      Autoload «Animaciones»: ritmo stop-motion y transiciones
 
 assets/fuentes/                Pangolin-Regular.ttf + licencia OFL
 assets/sonidos/                Efectos de sonido (vacía hasta que se agreguen; ver LEEME.md)
@@ -103,7 +103,7 @@ scripts/                       PowerShell: servidor, servidor web, exportar, pub
    termina aquí. No crea interfaz.
 4. **Cliente:**
    - Crea los controladores. El tema (`views/tema/tema_cuaderno.tres`) es el del proyecto, así que no
-     hay que aplicarlo.
+	 hay que aplicarlo.
    - Se suscribe a `Partida.jugador_registrado`, a `Partida.partida_iniciada` y a `Red.desconectado`.
    - Muestra la pantalla de registro.
 5. **Navegación**, siempre reaccionando a señales:
@@ -271,8 +271,13 @@ muestra uno hasta que termina la animación del anterior:
 4. Mensaje del Mock y cambio de turno.
 
 **`PanelAcciones`:**
-- Botón «Lanzar dado», activo solo en tu turno.
-- Fichas disponibles 1 a 4, junto con «Liberar ficha» y «Mover ficha».
+- **El dado es el botón para lanzar:** en tu turno se resalta con crayón amarillo y al hacerle clic emite
+  `DadoVista.presionado`, que llama a `ControladorTurno.procesar_lanzamiento_dado()`.
+- **Las fichas se eligen con clic en el tablero** (`TableroDibujo.ficha_clicada`); solo responden las
+  resaltadas y el cursor cambia a manita sobre ellas.
+  - Si no salió 5, el clic mueve la ficha.
+  - Si salió 5, aparecen «Liberar ficha» y «Mover ficha». «Liberar» queda sombreado si ya no hay fichas
+    en casa. Para mover, primero se hace clic en la ficha y luego en «Mover ficha».
 - Una **línea de resultado** con el último `mensaje` del Mock (o el error en rojo).
 
 **`TableroDibujo`:**
@@ -348,25 +353,25 @@ Para agregar una animación: escribe una función que cambie el estado, llame a 
 ## 10. Recorrido completo de un turno
 
 ```
-Jugador A pulsa «Lanzar dado»
- └─ PanelAcciones._on_lanzar → ControladorTurno.procesar_lanzamiento_dado()
-     └─ Red.solicitar("lanzar_dado") ══RPC══▶ servidor: Red._srv_accion → _ejecutar(remitente)
-         └─ Partida.lanzar_dado(A)
-             ├─ _validar_turno → Dado.generar_valor(fachada) → FachadaReglas → ReglasMock (1..6)
-             ├─ _notificar("dado_lanzado")  ══▶ todos: Partida(réplica).aplicar_evento → señal → VistaTablero
-             │                                     → el dado rueda y, al terminar, se revela el valor
-             └─ FachadaReglas.opciones() + accion_automatica()
-                 ├─ jugada obligada → liberar_ficha / mover_ficha automáticamente
-                 ├─ sin opciones    → mensaje + _finalizar_accion
-                 └─ con opciones    → _notificar("opciones_turno") → A ve la Pantalla 04
-Jugador A elige una ficha y pulsa «Mover ficha» (o «Liberar ficha»)
+Jugador A hace clic en el dado
+ └─ DadoVista.presionado → PanelAcciones._on_lanzar → ControladorTurno.procesar_lanzamiento_dado()
+	 └─ Red.solicitar("lanzar_dado") ══RPC══▶ servidor: Red._srv_accion → _ejecutar(remitente)
+		 └─ Partida.lanzar_dado(A)
+			 ├─ _validar_turno → Dado.generar_valor(fachada) → FachadaReglas → ReglasMock (1..6)
+			 ├─ _notificar("dado_lanzado")  ══▶ todos: Partida(réplica).aplicar_evento → señal → VistaTablero
+			 │                                     → el dado rueda y, al terminar, se revela el valor
+			 └─ FachadaReglas.opciones() + accion_automatica()
+				 ├─ jugada obligada → liberar_ficha / mover_ficha automáticamente
+				 ├─ sin opciones    → mensaje + _finalizar_accion
+				 └─ con opciones    → _notificar("opciones_turno") → A ve la Pantalla 04
+Jugador A hace clic en una ficha del tablero (con 5: «Liberar ficha» o ficha + «Mover ficha»)
  └─ ControladorTurno.mover_ficha(n) → Red ══▶ Partida.mover_ficha(A, n)
-     ├─ FachadaReglas.mover_ficha → ReglasMock.actualizar_posicion (+ enviar_ficha_a_base)
-     ├─ _notificar("ficha_movida") ══▶ todos: TableroDibujo.mostrar_posiciones (saltitos + sonidos)
-     ├─ _notificar("mensaje")      ══▶ todos: línea de resultado del PanelAcciones
-     └─ _finalizar_accion → FachadaReglas.validar_fin_turno
-         ├─ salió 6 y menos de 3 tiros → Turno.repetir → turno_cambiado(A)
-         └─ si no → Turno.siguiente → turno_cambiado(B) ══▶ B ve «¡TU TURNO!»
+	 ├─ FachadaReglas.mover_ficha → ReglasMock.actualizar_posicion (+ enviar_ficha_a_base)
+	 ├─ _notificar("ficha_movida") ══▶ todos: TableroDibujo.mostrar_posiciones (saltitos + sonidos)
+	 ├─ _notificar("mensaje")      ══▶ todos: línea de resultado del PanelAcciones
+	 └─ _finalizar_accion → FachadaReglas.validar_fin_turno
+		 ├─ salió 6 y menos de 3 tiros → Turno.repetir → turno_cambiado(A)
+		 └─ si no → Turno.siguiente → turno_cambiado(B) ══▶ B ve «¡TU TURNO!»
 ```
 
 ---
@@ -380,5 +385,5 @@ Jugador A elige una ficha y pulsa «Mover ficha» (o «Liberar ficha»)
   - `scripts/web.ps1`: servidor de la página web.
   - `scripts/exportar_web.ps1`: exporta a HTML5.
   - `scripts/publicar_tailscale.ps1`: HTTPS dentro de la red de Tailscale. La versión Web de Godot 4 solo
-    arranca en `https://` o en `localhost`.
+	arranca en `https://` o en `localhost`.
 - **Diagramas:** `docs/diseno_clases.puml`, `docs/diseno_secuencia_ejercer_turno.puml`, `docs/casos_de_uso.drawio`.

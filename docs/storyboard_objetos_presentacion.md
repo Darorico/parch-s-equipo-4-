@@ -41,7 +41,7 @@ usuario van al Controlador correspondiente.
 | Panel «Jugadores» (avatar, color, fichas en meta) | `PanelJugadores` | Se repinta con `jugadores_actualizados` |
 | Etiqueta «Turno» y fila resaltada | `PanelJugadores.marcar_turno()` | Observa `Partida.turno_cambiado` |
 | Caja «Turno de X · N fichas en meta» | `PanelJugadores._texto_turno` | Observa `turno_cambiado` |
-| Botón «Lanzar dado» | `PanelAcciones.boton_lanzar` → `ControladorTurno.procesar_lanzamiento_dado()` | Activo solo para el jugador en turno |
+| Lanzar el dado (clic en el dado) | `DadoVista` (señal `presionado`) → `ControladorTurno.procesar_lanzamiento_dado()` | Activo solo para el jugador en turno |
 | *(agregado)* Cara del dado | `PanelAcciones.dado : DadoVista` | Se anima con `Partida.dado_lanzado` |
 | Resultado del turno (una línea) | `PanelAcciones._linea_resultado` | Muestra el último `Partida.mensaje` (resultado del Mock) o el último error |
 
@@ -51,7 +51,7 @@ usuario van al Controlador correspondiente.
 |---|---|---|
 | Encabezado «04 · Elige una ficha válida» | Encabezado de `VistaTablero` | Cambia con `Partida.opciones_turno` |
 | «Resultado del dado» | `PanelAcciones._resultado` | Observa `dado_lanzado` |
-| «Fichas disponibles» (1, 2, 3, 4) | Chips de `PanelAcciones._chips` | Solo se activan las de `opciones_turno.fichas_movibles` |
+| Elegir ficha (clic en el tablero) | `TableroDibujo.ficha_clicada` → `PanelAcciones.seleccionar_ficha()` | Solo se activan las de `opciones_turno.fichas_movibles` |
 | Fichas resaltadas en el tablero | `TableroDibujo.resaltar()` | También se pueden elegir con un clic |
 | *(agregado)* Botón «Liberar ficha» | `PanelAcciones.boton_liberar` → `ControladorTurno.liberar_ficha()` | Solo si `puede_liberar` (salió 5) |
 | Botón «Mover ficha» | `PanelAcciones.boton_mover` → `ControladorTurno.mover_ficha(ficha_id)` | Activo al elegir una ficha |
