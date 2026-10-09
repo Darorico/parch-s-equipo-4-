@@ -36,6 +36,8 @@ controllers/                  CONTROLADOR
   red.gd                      Autoload «Red»: WebSocket, RPC y sincronización (CU09)
   bot_prueba.gd               Jugador automático solo para pruebas
 views/                        VISTA (una por pantalla del storyboard)
+  escenas/*.tscn              Diseño de cada pantalla, editable en el editor (ver Guia_Editor_Visual.md)
+  tema/                       Tema de la interfaz y fuente gruesa
   vista_registro.gd           Pantalla 01 Registro
   vista_sala_espera.gd        Pantalla 02 Sala de espera
   vista_tablero.gd            Pantallas 03 y 04 Tablero, turno y selección de ficha
@@ -49,6 +51,7 @@ scripts/                      servidor.ps1, web.ps1, exportar_web.ps1
 
 ## Documentos (`docs/`)
 
+- [`Guia_Editor_Visual.md`](Guia_Editor_Visual.md): **cómo ver y modificar las pantallas y el tablero en el editor de Godot**.
 - [`Arquitectura_Juego.md`](Arquitectura_Juego.md): **mapa de toda la programación**, con cada script, cómo interactúan, estilo visual, sonido y animación.
 - [`casos_de_uso.drawio`](docs/casos_de_uso.drawio): diagrama de casos de uso corregido (se abre en draw.io o app.diagrams.net). Respaldo en [`casos_de_uso.puml`](docs/casos_de_uso.puml).
 - [`diseno_clases.puml`](docs/diseno_clases.puml) y [`diseno_secuencia_ejercer_turno.puml`](docs/diseno_secuencia_ejercer_turno.puml): **modelo de diseño**, idéntico al código, para pasarlo a StarUML.

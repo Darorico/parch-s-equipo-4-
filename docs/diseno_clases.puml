@@ -53,7 +53,8 @@ package "views (Vista / objetos de presentación)" <<Folder>> {
     + boton_liberar : Button
     + boton_mover : Button
     + mostrar_turno(es_mio, nombre)
-    + mostrar_dado(valor, nombre, es_mio)
+    + animar_dado(valor) : float
+    + revelar_dado(valor, nombre, es_mio)
     + mostrar_opciones(movibles, puede_liberar)
     + mostrar_resultado(texto, es_error)
     + limpiar_opciones()
@@ -194,6 +195,7 @@ package "models (Modelo)" <<Folder>> {
       + opciones(jugador_id, valor) : Dictionary
       + liberar_ficha(jugador_id, valor) : Dictionary
       + mover_ficha(jugador_id, ficha_id, valor) : Dictionary
+      + accion_automatica(jugador_id, valor) : Dictionary
       + validar_fin_turno(jugador_id, valor, tiros) : bool
       + retirar_jugador(jugador_id)
     }
@@ -208,6 +210,7 @@ package "models (Modelo)" <<Folder>> {
       + actualizar_posicion(jugador_id, ficha_id, valor) : Dictionary
       + enviar_ficha_a_base(jugador_id, casilla) : String
       + establecer_barrera(jugador_id, casilla) : bool
+      + accion_automatica(jugador_id, valor) : Dictionary
       + repite_turno(jugador_id, valor, tiros) : bool
     }
     note bottom of ReglasMock

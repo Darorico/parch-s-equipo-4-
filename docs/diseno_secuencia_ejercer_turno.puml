@@ -51,14 +51,22 @@ PS --> RS : evento_emitido
 RS --> PA : _cli_evento("dado_lanzado") [CU09]
 RS --> PB : _cli_evento("dado_lanzado")
 PA --> VTA : <<signal>> dado_lanzado(A, valor)
-VTA -> VA : mostrar_dado(valor) (animación)
+VTA -> VA : animar_dado(valor)\n(la vista espera a que termine)
+VTA -> VA : revelar_dado(valor)
 PB --> VTB : <<signal>> dado_lanzado(A, valor)
 PS -> F : opciones(A, valor)
 F -> M : fichas_movibles(A, valor)\npuede_liberar(A, valor)
 M --> F : movibles, puede_liberar
 F --> PS : {movibles, puede_liberar}
 
-alt sin movimientos posibles (p. ej. todas en casa y no salió 5)
+PS -> F : accion_automatica(A, valor)
+F -> M : accion_automatica(A, valor)
+M --> F : {accion} o {}
+F --> PS : jugada obligada
+
+alt jugada obligada (todas en casa y salió 5 → liberar ficha 1; una sola ficha fuera y no salió 5 → moverla)
+  PS -> PS : liberar_ficha(A) / mover_ficha(A, ficha)\n(mismo camino que abajo, sin pedirle al jugador que elija)
+else sin movimientos posibles (p. ej. todas en casa y no salió 5)
   PS -> PS : _notificar("mensaje", "...no tiene fichas que mover")
 else hay movimientos
   PS -> PS : _notificar("opciones_turno", [A, movibles, puede_liberar])

@@ -2,6 +2,7 @@
 
 Mapa de toda la programación del proyecto: qué hace cada script, cómo se comunican y por dónde
 pasa cada acción del jugador. Sirve para orientarse antes de modificar algo.
+Para editar el diseño con el ratón en el editor de Godot, consulta [`Guia_Editor_Visual.md`](Guia_Editor_Visual.md).
 
 - **Motor:** Godot 4.5.1, GDScript, renderizador *GL Compatibility* (necesario para la Web).
 - **Caso de uso implementado:** CU12 *Ejercer turno del juego* (incluye CU04 Lanzar dado, CU05 Liberar
@@ -36,7 +37,7 @@ datos que trae cada señal. Las acciones del usuario van siempre Vista → Contr
 ## 2. Estructura de carpetas
 
 ```
-main.gd / main.tscn            Raíz de composición: crea todo y navega entre pantallas
+main.gd / main.tscn            Raíz de composición: crea todo y carga las pantallas (escenas)
 project.godot                  Escena principal, autoloads, ventana y fuente del proyecto
 export_presets.cfg             Preset de exportación Web (sin hilos: no necesita cabeceras COOP/COEP)
 
@@ -56,15 +57,19 @@ controllers/                   CONTROLADOR
   bot_prueba.gd                Jugador automático solo para pruebas (-- --auto)
 
 views/                         VISTA (una por pantalla del storyboard)
+  escenas/*.tscn               DISEÑO de cada pantalla y panel (se edita en el editor de Godot)
+  tema/tema_cuaderno.tres      Tema de toda la interfaz (también es el tema del proyecto)
+  tema/pangolin_negrita.tres   Pangolin «repasada» para títulos y botones
   vista_registro.gd            Pantalla 01: registro
   vista_sala_espera.gd         Pantalla 02: sala de espera
   vista_tablero.gd             Pantallas 03 y 04: tablero, turno y selección de ficha
+  fila_jugador.gd              Fila de un jugador (sala de espera y panel de jugadores)
   tablero_dibujo.gd            Tablero y fichas dibujados a crayón; animación de fichas
   panel_jugadores.gd           Lista de jugadores con el turno resaltado
   panel_acciones.gd            Dado, botones del turno y línea de resultado
   dado_vista.gd                Dado dibujado a lápiz con animación stop-motion
   avatar_icono.gd              Avatar del jugador (círculo de color con una figura)
-  estilo.gd                    Paleta de crayones, fuente Pangolin, tema y piezas comunes
+  estilo.gd                    Paleta de crayones, fuente Pangolin y piezas que se crean por código
   fx/                          Servicios de presentación (estilo «cuaderno escolar»)
     garabato.gd                Primitivas de dibujo a mano: líneas temblorosas y relleno de crayón
     stylebox_crayon.gd         StyleBox dibujado a mano (paneles, botones, campos de texto)
@@ -97,8 +102,8 @@ scripts/                       PowerShell: servidor, servidor web, exportar, pub
 3. **Servidor dedicado:** con `--servidor`, o con `--headless` sin `--cliente`, abre el puerto y
    termina aquí. No crea interfaz.
 4. **Cliente:**
-   - Crea los controladores y aplica el tema (`Estilo.crear_tema()`).
-   - Pone la hoja de cuaderno: `FondoPapel` y `Decoraciones`.
+   - Crea los controladores. El tema (`views/tema/tema_cuaderno.tres`) es el del proyecto, así que no
+     hay que aplicarlo.
    - Se suscribe a `Partida.jugador_registrado`, a `Partida.partida_iniciada` y a `Red.desconectado`.
    - Muestra la pantalla de registro.
 5. **Navegación**, siempre reaccionando a señales:
@@ -109,8 +114,11 @@ scripts/                       PowerShell: servidor, servidor web, exportar, pub
 | `jugador_registrado` con mi id | `VistaSalaEspera` |
 | `partida_iniciada` (si estoy en la lista) | `VistaTablero` |
 
-Cada cambio de pantalla agrega la vista nueva **de inmediato**, ya conectada al Modelo para no perder
-eventos, y llama a `Animaciones.transicion_pantalla()`: una hoja de papel se retira a saltos.
+Cada pantalla es una **escena** (`views/escenas/*.tscn`) que ya trae su papel arrugado y sus garabatos.
+`main` la instancia (`ESCENA_X.instantiate()`), la agrega al árbol, para que se resuelvan sus nodos
+`%Únicos`, y enseguida llama a su `configurar(...)`, que la suscribe al Modelo. Todo ocurre en el mismo
+manejador de señal, así que no se pierde ningún evento. Después `Animaciones.transicion_pantalla()`
+retira una hoja de papel a saltos.
 
 ### Argumentos de línea de comandos
 
@@ -162,7 +170,7 @@ de los eventos sea idéntico en todos los equipos.
 | `registrar_jugador(id, nombre, color, avatar)` | CU01 | Valida (máximo 4, nombre, color libre) y registra |
 | `confirmar_estado(id, listo)` | CU02 | Marca listo y llama a `verificar_estado_partida()` |
 | `verificar_estado_partida()` / `iniciar_partida()` | CU03 | Con 2 o más jugadores, todos listos: prepara el tablero y elige al azar quién empieza |
-| `lanzar_dado(id)` | CU04 | Valida el turno, pide el valor a la fachada, calcula las opciones |
+| `lanzar_dado(id)` | CU04 | Valida el turno, pide el valor a la fachada y calcula las opciones. Si la jugada es obligada (`accion_automatica`), la hace sola |
 | `liberar_ficha(id)` | CU05 | Fachada → `posicionar_en_salida` |
 | `mover_ficha(id, ficha_id)` | CU06 | Fachada → `actualizar_posicion` (+ captura) |
 | `_finalizar_accion(id)` | CU13 | La fachada valida el fin del turno: repite con 6 o pasa al siguiente |
@@ -187,6 +195,7 @@ de los eventos sea idéntico en todos los equipos.
 | `iniciar_partida(colores)` | `preparar_tablero` | Todas las fichas en casa |
 | `generar_valor()` | `generar_valor` | 1 a 6, o la secuencia de `--dados` |
 | `opciones(id, valor)` | `fichas_movibles`, `puede_liberar` | `{movibles, puede_liberar}` |
+| `accion_automatica(id, valor)` | `accion_automatica` | `{"accion": "liberar"}`, `{"accion": "mover", "ficha": n}` o `{}` |
 | `liberar_ficha(id, valor)` | `posicionar_en_salida` | `{ok, ficha_id, mensaje, posiciones}` |
 | `mover_ficha(id, ficha, valor)` | `actualizar_posicion` + `enviar_ficha_a_base` | Igual, más la captura |
 | `validar_fin_turno(id, valor, tiros)` | `repite_turno` | `true` si el turno termina |
@@ -199,6 +208,12 @@ de los eventos sea idéntico en todos los equipos.
 - **Con 5** se saca una ficha de casa; con cualquier número se mueve una ficha.
 - **Captura** fuera de las casillas seguras.
 - **Con 6** se vuelve a tirar, máximo 3 veces seguidas.
+- **Jugadas automáticas**, cuando solo hay una opción y no tiene sentido pedirle al jugador que elija:
+  - todas las fichas en casa y sale **5** → la **ficha 1** sale sola;
+  - **una sola ficha fuera** de casa y sale **otro número** → esa ficha se mueve sola.
+
+  El mensaje lleva «(automático)» y no se emite `opciones_turno`, así que la pantalla de selección no
+  aparece.
 
 No simula barreras (CU08), pasillo de meta ni victoria por meta.
 
@@ -242,10 +257,18 @@ servidor, el cliente reinicia su réplica y regresa al registro.
 
 **Componentes de `VistaTablero`:** `TableroDibujo`, `PanelJugadores` y `PanelAcciones` (que contiene `DadoVista`).
 
-**Cola de presentación de `VistaTablero`:** los eventos llegan casi juntos (dado, movimiento, cambio de
-turno), así que se encolan y se muestran en orden. Cada paso espera a que termine su animación:
-- El dado espera `PAUSA_DADO`.
-- El movimiento espera lo que devuelve `TableroDibujo.mostrar_posiciones()`, que es la duración del recorrido.
+Cada vista es una escena de `views/escenas/`. Su script toma los nodos con `@onready var x = %Nombre` y
+conecta los botones en `_ready()`. Por eso **los nodos con `%` no se deben renombrar** en el editor.
+
+**Cola de presentación de `VistaTablero`:** el servidor resuelve el turno al instante, así que los
+eventos llegan casi juntos (dado, movimiento, mensaje, cambio de turno). La vista los encola y no
+muestra uno hasta que termina la animación del anterior:
+1. `PanelAcciones.animar_dado()`: el dado rueda («Lanzando el dado...»). Devuelve su duración y la
+   cola la espera.
+2. `PanelAcciones.revelar_dado()`: **recién ahora** se muestra «Sacaste un N».
+3. Opciones (Pantalla 04) o movimiento: `TableroDibujo.mostrar_posiciones()` devuelve lo que tarda la
+   ficha en recorrer sus casillas y la cola lo espera.
+4. Mensaje del Mock y cambio de turno.
 
 **`PanelAcciones`:**
 - Botón «Lanzar dado», activo solo en tu turno.
@@ -302,15 +325,20 @@ Tiene un conjunto de 6 `AudioStreamPlayer`, caché de archivos, `volumen_db` y `
 
 ## 9. Animación stop-motion (`Animaciones`)
 
-- **Reloj:** `CUADROS_POR_SEGUNDO = 8`. En cada cuadro incrementa `Garabato.cuadro`, emite
+- **Reloj:** `CUADROS_POR_SEGUNDO = 8 × VELOCIDAD`. Con `VELOCIDAD = 0.4` son 3.2 cuadros por segundo,
+  un 60 % más lento que el original. En cada cuadro incrementa `Garabato.cuadro`, emite
   `cuadro_nuevo` y redibuja el grupo `garabato_vivo` (línea viva: los trazos tiemblan). Se apaga con
   `Animaciones.linea_viva = false`.
 - **`esperar_cuadros(n)`:** pausa medida en cuadros; todas las animaciones avanzan a ese ritmo.
-- **`transicion_pantalla()`:** una hoja de papel con el borde rasgado tapa la pantalla y se retira en 6
+- **`transicion_pantalla()`:** una hoja de papel con el borde rasgado tapa la pantalla y se retira en 4
   saltos, bamboleándose.
 - **Fichas** (`TableroDibujo`): avanzan **una casilla por cuadro**, elevadas y con sombra, y aterrizan al
   final. Al salir de casa o al ser capturadas dan un solo salto.
-- **Dado** (`DadoVista`): 5 cuadros con caras al azar, ladeándose, y se queda en el valor final.
+- **Dado** (`DadoVista`): 4 cuadros con caras al azar, ladeándose, y se queda en el valor final.
+  `DadoVista.duracion_animacion()` dice cuánto dura, para sincronizar el resultado.
+- **En el editor:** `TableroDibujo`, `DadoVista`, `AvatarIcono`, `FondoPapel`, `Decoraciones`,
+  `StyleBoxCrayon`, `Garabato` y `Estilo` son `@tool`, así que se dibujan dentro del editor. No usan los
+  autoloads cuando `Engine.is_editor_hint()` es verdadero.
 
 Para agregar una animación: escribe una función que cambie el estado, llame a `queue_redraw()` y haga
 `await Animaciones.esperar_cuadros(1)` entre cada cambio.
@@ -326,10 +354,11 @@ Jugador A pulsa «Lanzar dado»
          └─ Partida.lanzar_dado(A)
              ├─ _validar_turno → Dado.generar_valor(fachada) → FachadaReglas → ReglasMock (1..6)
              ├─ _notificar("dado_lanzado")  ══▶ todos: Partida(réplica).aplicar_evento → señal → VistaTablero
-             │                                     → DadoVista.animar (stop-motion + Sonidos.dado)
-             └─ FachadaReglas.opciones()
-                 ├─ sin opciones → mensaje + _finalizar_accion
-                 └─ con opciones → _notificar("opciones_turno") → A ve la Pantalla 04
+             │                                     → el dado rueda y, al terminar, se revela el valor
+             └─ FachadaReglas.opciones() + accion_automatica()
+                 ├─ jugada obligada → liberar_ficha / mover_ficha automáticamente
+                 ├─ sin opciones    → mensaje + _finalizar_accion
+                 └─ con opciones    → _notificar("opciones_turno") → A ve la Pantalla 04
 Jugador A elige una ficha y pulsa «Mover ficha» (o «Liberar ficha»)
  └─ ControladorTurno.mover_ficha(n) → Red ══▶ Partida.mover_ficha(A, n)
      ├─ FachadaReglas.mover_ficha → ReglasMock.actualizar_posicion (+ enviar_ficha_a_base)
