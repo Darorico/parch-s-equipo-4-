@@ -4,18 +4,16 @@ extends MarginContainer
 ##
 ## OBSERVADOR del Modelo: se suscribe a las señales de Partida y repinta sus subvistas con los datos
 ## que traen. Nunca consulta al Modelo; las acciones del usuario van al ControladorTurno.
-## Los eventos se presentan en orden y con una pausa breve (animación del dado) para que se
-## entienda lo que pasó antes de mostrar el cambio de turno.
+## Los eventos se presentan en orden y esperando a que termine cada animación (el dado rodando, la
+## ficha avanzando casilla por casilla) antes de mostrar el siguiente, por ejemplo el cambio de turno.
 
 signal volver_al_inicio
 
 const PAUSA_DADO := 0.75
-const PAUSA_MOVIMIENTO := 0.35
 
 var tablero := TableroDibujo.new()
 var panel_jugadores := PanelJugadores.new()
 var panel_acciones := PanelAcciones.new()
-var bitacora := Bitacora.new()
 var _encabezado: HBoxContainer
 var _mi_id := 0
 var _nombres := {}  # jugador_id -> nombre (de lo recibido en las señales)
@@ -27,12 +25,12 @@ var _procesando := false
 func _init() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for lado in ["left", "right"]:
-		add_theme_constant_override("margin_" + lado, 28)
+		add_theme_constant_override("margin_" + lado, 40)
 	for lado in ["top", "bottom"]:
-		add_theme_constant_override("margin_" + lado, 18)
+		add_theme_constant_override("margin_" + lado, 16)
 
 	var raiz := VBoxContainer.new()
-	raiz.add_theme_constant_override("separation", 14)
+	raiz.add_theme_constant_override("separation", 10)
 	add_child(raiz)
 	_encabezado = Estilo.encabezado("", "", "", "")
 	raiz.add_child(_encabezado)
@@ -40,32 +38,20 @@ func _init() -> void:
 
 	var cuerpo := HBoxContainer.new()
 	cuerpo.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	cuerpo.add_theme_constant_override("separation", 18)
+	cuerpo.add_theme_constant_override("separation", 22)
 	raiz.add_child(cuerpo)
+	cuerpo.add_child(tablero)
 
-	var marco := PanelContainer.new()
-	marco.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	marco.add_child(tablero)
-	cuerpo.add_child(marco)
-
-	# Columna de jugadores y bitácora (con scroll por si hay 4 jugadores y muchos mensajes).
 	var desplazable := ScrollContainer.new()
-	desplazable.custom_minimum_size.x = 300
+	desplazable.custom_minimum_size.x = 370
 	desplazable.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	cuerpo.add_child(desplazable)
-	var columna_info := VBoxContainer.new()
-	columna_info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	columna_info.add_theme_constant_override("separation", 12)
-	columna_info.add_child(panel_jugadores)
-	columna_info.add_child(bitacora)
-	desplazable.add_child(columna_info)
-
-	# Columna de acciones del turno.
-	var columna_acciones := VBoxContainer.new()
-	columna_acciones.custom_minimum_size.x = 290
-	columna_acciones.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	columna_acciones.add_child(panel_acciones)
-	cuerpo.add_child(columna_acciones)
+	var lateral := VBoxContainer.new()
+	lateral.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	lateral.add_theme_constant_override("separation", 14)
+	lateral.add_child(panel_jugadores)
+	lateral.add_child(panel_acciones)
+	desplazable.add_child(lateral)
 
 
 ## `jugadores` son los datos que trajo la señal partida_iniciada.
@@ -106,11 +92,11 @@ func _on_opciones_turno(jugador_id: int, movibles: Array, puede_liberar: bool) -
 
 
 func _on_ficha_movida(_jugador_id: int, _ficha_id: int, posiciones: Dictionary) -> void:
-	_encolar(_mostrar_movimiento.bind(posiciones), PAUSA_MOVIMIENTO)
+	_encolar(_mostrar_movimiento.bind(posiciones))
 
 
 func _on_mensaje(texto: String) -> void:
-	_encolar(bitacora.agregar.bind(texto))
+	_encolar(panel_acciones.mostrar_resultado.bind(texto))
 
 
 func _on_partida_terminada(ganador_id: int, motivo: String) -> void:
@@ -118,7 +104,7 @@ func _on_partida_terminada(ganador_id: int, motivo: String) -> void:
 
 
 func _on_error(texto: String) -> void:
-	bitacora.agregar(texto, Estilo.ERROR_TEXTO)
+	panel_acciones.mostrar_resultado(texto, true)
 	panel_acciones.restaurar()
 
 
@@ -140,7 +126,6 @@ func _mostrar_turno(jugador_id: int) -> void:
 
 func _mostrar_dado(jugador_id: int, valor: int) -> void:
 	panel_acciones.mostrar_dado(valor, _nombre(jugador_id), jugador_id == _mi_id)
-	bitacora.agregar("%s lanzó el dado: %d" % [_nombre(jugador_id), valor])
 
 
 func _mostrar_opciones(jugador_id: int, movibles: Array, puede_liberar: bool) -> void:
@@ -153,10 +138,11 @@ func _mostrar_opciones(jugador_id: int, movibles: Array, puede_liberar: bool) ->
 	panel_acciones.mostrar_opciones(movibles, puede_liberar)
 
 
-func _mostrar_movimiento(posiciones: Dictionary) -> void:
-	tablero.mostrar_posiciones(posiciones)
+## Devuelve la duración de la animación para que la cola espere a que la ficha llegue.
+func _mostrar_movimiento(posiciones: Dictionary) -> float:
 	tablero.resaltar(0, [])
 	panel_acciones.limpiar_opciones()
+	return tablero.mostrar_posiciones(posiciones)
 
 
 func _mostrar_fin(ganador_id: int, motivo: String) -> void:
@@ -165,15 +151,17 @@ func _mostrar_fin(ganador_id: int, motivo: String) -> void:
 	var columna := VBoxContainer.new()
 	columna.custom_minimum_size.x = 380
 	columna.add_theme_constant_override("separation", 12)
-	columna.add_child(Estilo.etiqueta("%s gana" % _nombre(ganador_id), 26, Estilo.TEXTO, true))
+	columna.add_child(Estilo.etiqueta("¡%s gana!" % _nombre(ganador_id), 34, Estilo.TITULO, true))
 	columna.add_child(Estilo.parrafo(motivo))
 	var boton := Button.new()
 	boton.text = "Volver al inicio"
 	boton.theme_type_variation = &"BotonPrimario"
 	boton.pressed.connect(volver_al_inicio.emit)
 	columna.add_child(boton)
+	var tarjeta := Estilo.tarjeta("Resultado final", columna)
+	tarjeta.add_theme_stylebox_override("panel", Estilo.caja(Estilo.PAPEL, Estilo.LAPIZ, 22.0))
 	var centro := CenterContainer.new()
-	centro.add_child(Estilo.tarjeta("Resultado final", columna))
+	centro.add_child(tarjeta)
 	add_child(centro)
 
 
@@ -192,6 +180,7 @@ func _nombre(jugador_id: int) -> String:
 
 # --- Cola de presentación ---
 
+## `accion` puede devolver un número: los segundos que dura su animación.
 func _encolar(accion: Callable, pausa := 0.0) -> void:
 	_cola.append([accion, pausa])
 	if not _procesando:
@@ -202,7 +191,10 @@ func _procesar_cola() -> void:
 	_procesando = true
 	while not _cola.is_empty():
 		var siguiente: Array = _cola.pop_front()
-		siguiente[0].call()
-		if siguiente[1] > 0.0 and is_inside_tree():
-			await get_tree().create_timer(siguiente[1]).timeout
+		var duracion = siguiente[0].call()
+		var espera: float = siguiente[1]
+		if duracion is float:
+			espera = maxf(espera, duracion)
+		if espera > 0.0 and is_inside_tree():
+			await get_tree().create_timer(espera).timeout
 	_procesando = false

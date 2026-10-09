@@ -1,8 +1,9 @@
 class_name DadoVista
 extends Control
-## Cara del dado. Al recibir un valor hace una pequeña animación y se queda en ese valor.
+## Dado dibujado a lápiz. Al recibir un valor «rueda» unos cuadros a saltos (stop-motion),
+## ladeándose en cada cuadro, y se queda en ese valor.
 
-const DURACION_ANIMACION := 0.55
+const CUADROS_ANIMACION := 5
 const PUNTOS := {
 	1: [Vector2(0, 0)],
 	2: [Vector2(-1, -1), Vector2(1, 1)],
@@ -13,38 +14,46 @@ const PUNTOS := {
 }
 
 var valor := 0
+var _inclinacion := 0.0
 var _animacion := 0
 
 
 func _init() -> void:
-	custom_minimum_size = Vector2(76, 76)
+	custom_minimum_size = Vector2(80, 80)
+	add_to_group(Animaciones.GRUPO_VIVO)
 
 
 func animar(valor_final: int) -> void:
 	_animacion += 1
 	var esta_animacion := _animacion
-	var pasos := 9
-	for i in pasos:
+	Sonidos.dado()
+	for i in CUADROS_ANIMACION:
 		if esta_animacion != _animacion or not is_inside_tree():
 			return
 		valor = randi_range(1, 6)
+		_inclinacion = randf_range(-0.35, 0.35)
 		queue_redraw()
-		await get_tree().create_timer(DURACION_ANIMACION / pasos).timeout
+		await Animaciones.esperar_cuadros(1)
 	if esta_animacion == _animacion:
 		valor = valor_final
+		_inclinacion = 0.0
 		queue_redraw()
 
 
 func _draw() -> void:
-	var lado := minf(size.x, size.y) - 4.0
-	var rect := Rect2((size - Vector2(lado, lado)) / 2.0, Vector2(lado, lado))
-	draw_style_box(Estilo.caja(Color.WHITE, 14, Estilo.BORDE), rect)
-	var centro := rect.get_center()
+	var ci := get_canvas_item()
+	var lado := minf(size.x, size.y) - 10.0
+	var centro := size / 2.0
+	var semilla := 900 + Garabato.cuadro % 3
+	draw_set_transform(centro, _inclinacion, Vector2.ONE)
+	var cuadrado := Rect2(-Vector2(lado, lado) / 2.0, Vector2(lado, lado))
+	RenderingServer.canvas_item_add_rect(ci, cuadrado, Estilo.PAPEL)
+	Garabato.rect(ci, cuadrado, Garabato.LAPIZ, 2.4, semilla, 1.2)
 	if valor == 0:
-		var fuente := Estilo.negrita()
-		var tamano := int(lado * 0.45)
-		draw_string(fuente, Vector2(rect.position.x, centro.y + tamano * 0.35), "?",
+		var tamano := int(lado * 0.55)
+		draw_string(Estilo.negrita(), Vector2(cuadrado.position.x, tamano * 0.35), "?",
 				HORIZONTAL_ALIGNMENT_CENTER, lado, tamano, Estilo.TEXTO_SUAVE)
-		return
-	for punto: Vector2 in PUNTOS[valor]:
-		draw_circle(centro + punto * lado * 0.26, lado * 0.085, Estilo.TEXTO)
+	else:
+		for punto: Vector2 in PUNTOS[valor]:
+			Garabato.disco(ci, punto * lado * 0.26, lado * 0.085, Garabato.LAPIZ, semilla + int(punto.x * 7 + punto.y * 13))
+	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)

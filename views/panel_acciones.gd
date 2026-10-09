@@ -3,6 +3,8 @@ extends PanelContainer
 ## Controles del turno (Pantallas 03 y 04 del storyboard): dado, «Lanzar dado», «Fichas disponibles»,
 ## «Liberar ficha» y «Mover ficha». No decide nada: solo le pasa la intención del usuario al
 ## ControladorTurno. Qué botones están activos lo decide la VistaTablero según las señales del Modelo.
+## Debajo de los botones muestra, en una sola línea, el último resultado que devolvió el Mock
+## («Ficha movida N casillas», «¡Éxito! Sacó la ficha…») o el último error.
 
 signal ficha_elegida(ficha_id: int)
 
@@ -10,8 +12,9 @@ var dado := DadoVista.new()
 var boton_lanzar := Button.new()
 var boton_liberar := Button.new()
 var boton_mover := Button.new()
-var _titulo := Estilo.etiqueta("Dado", 18, Estilo.TEXTO, true)
-var _resultado := Estilo.parrafo("Aún no se ha lanzado el dado.", 13)
+var _titulo := Estilo.etiqueta("DADO", 26, Estilo.TITULO, true)
+var _resultado := Estilo.parrafo("Aún no se ha lanzado el dado.", 16, Estilo.TEXTO_SUAVE)
+var _linea_resultado := Estilo.parrafo("", 16)
 var _seccion_fichas := VBoxContainer.new()
 var _chips: Array[Button] = []
 var _grupo := ButtonGroup.new()
@@ -39,13 +42,13 @@ func _init() -> void:
 
 	boton_lanzar.text = "Lanzar dado"
 	boton_lanzar.theme_type_variation = &"BotonPrimario"
-	boton_lanzar.custom_minimum_size.y = 44
+	boton_lanzar.custom_minimum_size.y = 50
 	boton_lanzar.disabled = true
 	boton_lanzar.pressed.connect(_on_lanzar)
 	columna.add_child(boton_lanzar)
 
 	_seccion_fichas.add_theme_constant_override("separation", 8)
-	_seccion_fichas.add_child(Estilo.rotulo("FICHAS DISPONIBLES"))
+	_seccion_fichas.add_child(Estilo.resaltado("Fichas disponibles"))
 	var fila_chips := HBoxContainer.new()
 	fila_chips.add_theme_constant_override("separation", 8)
 	_grupo.allow_unpress = true
@@ -76,6 +79,9 @@ func _init() -> void:
 	fila_botones.add_child(boton_mover)
 	_seccion_fichas.add_child(fila_botones)
 	columna.add_child(_seccion_fichas)
+
+	_linea_resultado.custom_minimum_size.y = 44
+	columna.add_child(_linea_resultado)
 	limpiar_opciones()
 
 
@@ -87,7 +93,9 @@ func mostrar_turno(es_mio: bool, nombre: String) -> void:
 	_puede_lanzar = es_mio
 	boton_lanzar.disabled = not es_mio
 	boton_lanzar.text = "Lanzar dado" if es_mio else "Turno de %s" % nombre
-	_titulo.text = "¡Es tu turno!" if es_mio else "Turno de %s" % nombre
+	_titulo.text = "¡TU TURNO!" if es_mio else "TURNO DE %s" % nombre.to_upper()
+	if es_mio:
+		Sonidos.turno_propio()
 	limpiar_opciones()
 
 
@@ -100,7 +108,7 @@ func mostrar_opciones(movibles: Array, puede_liberar: bool) -> void:
 	_opciones = {"movibles": movibles, "puede_liberar": puede_liberar}
 	_puede_lanzar = false
 	boton_lanzar.disabled = true
-	_titulo.text = "Elige una ficha válida"
+	_titulo.text = "ELIGE FICHA"
 	for chip in _chips:
 		chip.disabled = not chip.get_meta("ficha") in movibles
 		chip.set_pressed_no_signal(false)
@@ -117,6 +125,12 @@ func limpiar_opciones() -> void:
 		chip.disabled = true
 	boton_liberar.disabled = true
 	boton_mover.disabled = true
+
+
+## Última línea de resultado del Mock (o error, en rojo).
+func mostrar_resultado(texto: String, es_error := false) -> void:
+	_linea_resultado.text = texto
+	_linea_resultado.add_theme_color_override("font_color", Estilo.ERROR_TEXTO if es_error else Estilo.TEXTO)
 
 
 ## Vuelve a habilitar lo que estaba disponible (por ejemplo, si el servidor rechazó la acción).

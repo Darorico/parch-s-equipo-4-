@@ -1,6 +1,7 @@
 extends Control
 ## Raíz de composición de la aplicación: crea el Modelo (Partida con su FachadaReglas y el Mock),
-## los Controladores y las Vistas, y cambia de pantalla observando al Modelo.
+## los Controladores y las Vistas, y cambia de pantalla observando al Modelo. También pone la hoja
+## de cuaderno (papel arrugado y garabatos de los márgenes) detrás de todas las pantallas.
 ##
 ## Argumentos de línea de comandos (después de `--`):
 ##   --servidor            Servidor dedicado sin interfaz (se activa solo con --headless).
@@ -35,7 +36,8 @@ func _ready() -> void:
 	controlador_turno = ControladorTurno.new()
 	controlador_lobby = ControladorLobby.new(partida)
 	theme = Estilo.crear_tema()
-	RenderingServer.set_default_clear_color(Estilo.FONDO)
+	RenderingServer.set_default_clear_color(Estilo.PAPEL)
+	_crear_hoja_de_cuaderno()
 
 	partida.jugador_registrado.connect(_on_jugador_registrado)
 	partida.partida_iniciada.connect(_on_partida_iniciada)
@@ -93,11 +95,21 @@ func _mostrar_registro(aviso := "") -> void:
 	_cambiar_pantalla(vista)
 
 
+## La pantalla nueva se agrega de inmediato (ya conectada al Modelo, para no perder eventos) y una
+## hoja de papel la destapa a saltos (GestorAnimaciones.transicion_pantalla).
 func _cambiar_pantalla(nueva: Control) -> void:
 	if _pantalla:
 		_pantalla.queue_free()
 	_pantalla = nueva
 	add_child(nueva)
+	Animaciones.transicion_pantalla()
+
+
+func _crear_hoja_de_cuaderno() -> void:
+	var papel := FondoPapel.new()
+	papel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	add_child(papel)
+	add_child(Decoraciones.new())
 
 
 # --- Utilidades ---

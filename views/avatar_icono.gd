@@ -1,7 +1,8 @@
 class_name AvatarIcono
 extends Control
-## Avatar de un jugador: círculo de su color con una figura blanca elegida al registrarse.
-## Con forma = -1 se dibuja solo el punto de color (para el selector de color).
+## Avatar de un jugador dibujado a crayón: un círculo de lápiz de su color con la figura elegida
+## (estrella, rombo, anillo o triángulo) coloreada dentro. Con forma = -1 se dibuja solo una bolita
+## de color (para el selector de color).
 
 const FORMAS := ["Estrella", "Rombo", "Anillo", "Triángulo"]
 
@@ -20,34 +21,35 @@ func _init(p_color := Color.GRAY, p_forma := 0, tamano := 36.0) -> void:
 	forma = p_forma
 	custom_minimum_size = Vector2(tamano, tamano)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_to_group(Animaciones.GRUPO_VIVO)
 
 
 func _draw() -> void:
+	var ci := get_canvas_item()
 	var centro := size / 2.0
-	var radio := minf(size.x, size.y) / 2.0
-	draw_circle(centro, radio, color)
-	var blanco := Color.WHITE
+	var radio := minf(size.x, size.y) / 2.0 - 2.0
+	var semilla := Garabato.semilla_de(forma) + Garabato.cuadro % 3
+	if forma < 0:
+		Garabato.disco(ci, centro, radio, color, semilla)
+		return
+	Garabato.circulo(ci, centro, radio, color, maxf(2.0, radio / 8.0), semilla, 0.8)
+	var figura: PackedVector2Array
 	match forma:
 		0:
-			draw_colored_polygon(_estrella(centro, radio * 0.58, radio * 0.25, 5), blanco)
+			figura = Garabato.poligono_estrella(centro, radio * 0.68, radio * 0.3)
 		1:
-			draw_colored_polygon(PackedVector2Array([
-				centro + Vector2(0, -radio * 0.5), centro + Vector2(radio * 0.4, 0),
-				centro + Vector2(0, radio * 0.5), centro + Vector2(-radio * 0.4, 0),
-			]), blanco)
+			figura = PackedVector2Array([
+				centro + Vector2(0, -radio * 0.62), centro + Vector2(radio * 0.42, 0),
+				centro + Vector2(0, radio * 0.62), centro + Vector2(-radio * 0.42, 0),
+			])
 		2:
-			draw_arc(centro, radio * 0.32, 0.0, TAU, 32, blanco, radio * 0.16, true)
-		3:
-			draw_colored_polygon(PackedVector2Array([
-				centro + Vector2(0, -radio * 0.45), centro + Vector2(radio * 0.45, radio * 0.35),
-				centro + Vector2(-radio * 0.45, radio * 0.35),
-			]), blanco)
-
-
-static func _estrella(centro: Vector2, radio_externo: float, radio_interno: float, puntas: int) -> PackedVector2Array:
-	var puntos := PackedVector2Array()
-	for i in puntas * 2:
-		var angulo := -PI / 2.0 + i * PI / puntas
-		var radio := radio_externo if i % 2 == 0 else radio_interno
-		puntos.append(centro + Vector2(cos(angulo), sin(angulo)) * radio)
-	return puntos
+			Garabato.circulo(ci, centro, radio * 0.45, color, maxf(2.0, radio / 7.0), semilla + 5, 0.5)
+			Garabato.rellenar_circulo(ci, centro, radio * 0.18, color, semilla + 6)
+			return
+		_:
+			figura = PackedVector2Array([
+				centro + Vector2(0, -radio * 0.55), centro + Vector2(radio * 0.55, radio * 0.42),
+				centro + Vector2(-radio * 0.55, radio * 0.42),
+			])
+	Garabato.rellenar(ci, figura, color, semilla + 1, 2.5, 1.8)
+	Garabato.contorno(ci, figura, color.darkened(0.25), 1.6, semilla + 2, 0.5)

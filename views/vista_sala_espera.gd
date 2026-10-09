@@ -8,9 +8,9 @@ var _mi_id := 0
 var _estoy_listo := false
 var _lista := VBoxContainer.new()
 var _resumen := Label.new()
-var _conectados := Estilo.etiqueta("", 15, Estilo.PRIMARIO, true)
+var _conectados := Estilo.etiqueta("", 22, Estilo.TEXTO, true)
 var _boton_listo := Button.new()
-var _estado := Estilo.parrafo("", 13, Estilo.ERROR_TEXTO)
+var _estado := Estilo.parrafo("", 16, Estilo.ERROR_TEXTO)
 
 
 func _init() -> void:
@@ -37,14 +37,16 @@ func _init() -> void:
 	_lista.add_theme_constant_override("separation", 6)
 	sala.add_child(_lista)
 	var caja_resumen := PanelContainer.new()
-	caja_resumen.add_theme_stylebox_override("panel", Estilo.caja(Estilo.PRIMARIO_SUAVE, 10, Color.TRANSPARENT, 10))
-	_resumen.add_theme_color_override("font_color", Estilo.PRIMARIO)
+	caja_resumen.add_theme_stylebox_override("panel", Estilo.caja(Color(Estilo.PRIMARIO_SUAVE, 0.55), Color.TRANSPARENT, 10.0))
+	_resumen.add_theme_color_override("font_color", Estilo.TEXTO)
+	_resumen.add_theme_font_size_override("font_size", 19)
 	_resumen.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	caja_resumen.add_child(_resumen)
 	sala.add_child(caja_resumen)
-	_boton_listo.text = "Listo"
+	_boton_listo.text = "LISTO"
 	_boton_listo.theme_type_variation = &"BotonPrimario"
-	_boton_listo.custom_minimum_size.y = 44
+	_boton_listo.custom_minimum_size.y = 64
+	_boton_listo.add_theme_font_size_override("font_size", 30)
 	_boton_listo.pressed.connect(_on_listo)
 	sala.add_child(_boton_listo)
 	sala.add_child(_estado)
@@ -54,7 +56,7 @@ func _init() -> void:
 	estado_partida.custom_minimum_size.x = 320
 	estado_partida.add_theme_constant_override("separation", 10)
 	estado_partida.add_child(_conectados)
-	estado_partida.add_child(Estilo.rotulo("REGLAS ACTIVAS"))
+	estado_partida.add_child(Estilo.resaltado("Reglas activas"))
 	estado_partida.add_child(Estilo.parrafo("• De 2 a 4 jugadores pueden jugar."))
 	estado_partida.add_child(Estilo.parrafo("• Todos deben confirmar «Listo» antes de arrancar."))
 	estado_partida.add_child(Estilo.parrafo("• El sistema elige al azar quién empieza; los turnos siguen el sentido horario."))
@@ -82,7 +84,7 @@ func _on_jugadores_actualizados(jugadores: Array) -> void:
 		_lista.add_child(_fila(datos))
 	_resumen.text = "%d/%d listos · se necesitan al menos %d jugadores y que todos confirmen." % [listos, jugadores.size(), Partida.MIN_JUGADORES]
 	_conectados.text = "%d de %d jugadores conectados" % [jugadores.size(), Partida.MAX_JUGADORES]
-	_boton_listo.text = "Cancelar «Listo»" if _estoy_listo else "Listo"
+	_boton_listo.text = "CANCELAR «LISTO»" if _estoy_listo else "LISTO"
 	_boton_listo.theme_type_variation = &"" if _estoy_listo else &"BotonPrimario"
 	_boton_listo.disabled = false
 
@@ -101,15 +103,15 @@ func _on_error(texto: String) -> void:
 func _fila(datos: Dictionary) -> Control:
 	var fila := HBoxContainer.new()
 	fila.add_theme_constant_override("separation", 10)
-	fila.add_child(AvatarIcono.new(Estilo.color_de(datos.color), datos.avatar, 34))
+	fila.add_child(AvatarIcono.new(Estilo.color_de(datos.color), datos.avatar, 48))
 	var textos := VBoxContainer.new()
 	textos.add_theme_constant_override("separation", 0)
 	textos.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	textos.add_child(Estilo.etiqueta(datos.nombre + (" (tú)" if datos.id == _mi_id else ""), 15, Estilo.TEXTO, true))
-	textos.add_child(Estilo.etiqueta("%s · %s" % [Estilo.NOMBRES[datos.color], "listo" if datos.listo else "esperando"], 12, Estilo.TEXTO_SUAVE))
+	textos.add_child(Estilo.etiqueta(datos.nombre + (" (tú)" if datos.id == _mi_id else ""), 22, Estilo.color_de(datos.color).darkened(0.25), true))
+	textos.add_child(Estilo.etiqueta("%s · %s" % [Estilo.NOMBRES[datos.color], "listo" if datos.listo else "esperando"], 16, Estilo.TEXTO))
 	fila.add_child(textos)
 	if datos.listo:
 		fila.add_child(Estilo.pildora("Listo", Estilo.EXITO, Estilo.EXITO_TEXTO))
 	else:
-		fila.add_child(Estilo.pildora("Esperando", Color("#eceff4"), Estilo.TEXTO_SUAVE))
+		fila.add_child(Estilo.pildora("Esperando", Estilo.PRIMARIO_SUAVE, Estilo.TEXTO))
 	return fila
