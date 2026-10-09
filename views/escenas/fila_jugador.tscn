@@ -1,0 +1,79 @@
+[gd_scene load_steps=7 format=3]
+
+[ext_resource type="Script" path="res://views/fx/stylebox_crayon.gd" id="1_8psxg"]
+[ext_resource type="Script" path="res://views/fila_jugador.gd" id="2_i6uai"]
+[ext_resource type="Script" path="res://views/avatar_icono.gd" id="3_6ukww"]
+[ext_resource type="FontVariation" path="res://views/tema/pangolin_negrita.tres" id="4_bopgh"]
+
+[sub_resource type="StyleBox" id="StyleBox_0h4ud"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 6.0
+content_margin_top = 6.0
+content_margin_right = 6.0
+content_margin_bottom = 6.0
+script = ExtResource("1_8psxg")
+borde = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBox" id="StyleBox_rpwb4"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 10.0
+content_margin_top = 3.0
+content_margin_right = 10.0
+content_margin_bottom = 3.0
+script = ExtResource("1_8psxg")
+relleno = Color(0.56078434, 0.81960785, 0.43137255, 1)
+borde = Color(1, 1, 1, 0)
+
+[node name="FilaJugador" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBox_0h4ud")
+script = ExtResource("2_i6uai")
+
+[node name="Fila" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Avatar" type="Control" parent="Fila"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(44, 44)
+layout_mode = 2
+mouse_filter = 2
+script = ExtResource("3_6ukww")
+color = Color(0.8509804, 0.22745098, 0.16862746, 1)
+
+[node name="Textos" type="VBoxContainer" parent="Fila"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -4
+alignment = 1
+
+[node name="Nombre" type="Label" parent="Fila/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_bopgh")
+theme_override_font_sizes/font_size = 21
+theme_override_colors/font_color = Color(0.63823533, 0.17058824, 0.1264706, 1)
+text = "Nombre del jugador"
+
+[node name="Detalle" type="Label" parent="Fila/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "Rojo · detalle"
+
+[node name="Etiqueta" type="PanelContainer" parent="Fila"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_rpwb4")
+
+[node name="TextoEtiqueta" type="Label" parent="Fila/Etiqueta"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_bopgh")
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.11764706, 0.3529412, 0.15294118, 1)
+text = "LISTO"

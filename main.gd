@@ -1,7 +1,7 @@
 extends Control
 ## Raíz de composición de la aplicación: crea el Modelo (Partida con su FachadaReglas y el Mock),
-## los Controladores y las Vistas, y cambia de pantalla observando al Modelo. También pone la hoja
-## de cuaderno (papel arrugado y garabatos de los márgenes) detrás de todas las pantallas.
+## los Controladores y las Vistas, y cambia de pantalla observando al Modelo.
+## Cada pantalla es una escena editable en views/escenas/ (con su papel y sus garabatos).
 ##
 ## Argumentos de línea de comandos (después de `--`):
 ##   --servidor            Servidor dedicado sin interfaz (se activa solo con --headless).
@@ -13,6 +13,10 @@ extends Control
 ##   --auto                Jugador automático para pruebas (se registra y juega solo).
 ##   --turnos=10           Con --auto: cambios de turno antes de salir.
 ##   --capturas=carpeta    Con --auto: guarda capturas de pantalla de cada paso.
+
+const ESCENA_REGISTRO := preload("res://views/escenas/vista_registro.tscn")
+const ESCENA_SALA := preload("res://views/escenas/vista_sala_espera.tscn")
+const ESCENA_TABLERO := preload("res://views/escenas/vista_tablero.tscn")
 
 var partida: Partida
 var controlador_turno: ControladorTurno
@@ -35,9 +39,7 @@ func _ready() -> void:
 
 	controlador_turno = ControladorTurno.new()
 	controlador_lobby = ControladorLobby.new(partida)
-	theme = Estilo.crear_tema()
 	RenderingServer.set_default_clear_color(Estilo.PAPEL)
-	_crear_hoja_de_cuaderno()
 
 	partida.jugador_registrado.connect(_on_jugador_registrado)
 	partida.partida_iniciada.connect(_on_partida_iniciada)
@@ -63,18 +65,18 @@ func _iniciar_servidor_dedicado() -> void:
 
 func _on_jugador_registrado(jugador_id: int) -> void:
 	if jugador_id == Red.mi_id() and _pantalla is VistaRegistro:
-		var sala := VistaSalaEspera.new()
-		sala.configurar(partida, controlador_lobby, Red.mi_id())
+		var sala: VistaSalaEspera = ESCENA_SALA.instantiate()
 		_cambiar_pantalla(sala)
+		sala.configurar(partida, controlador_lobby, Red.mi_id())
 
 
 func _on_partida_iniciada(jugadores: Array, _orden: Array) -> void:
 	if not jugadores.any(func(datos: Dictionary) -> bool: return datos.id == Red.mi_id()):
 		return
-	var vista := VistaTablero.new()
+	var vista: VistaTablero = ESCENA_TABLERO.instantiate()
+	_cambiar_pantalla(vista)
 	vista.configurar(partida, controlador_turno, Red.mi_id(), jugadores)
 	vista.volver_al_inicio.connect(_on_volver_al_inicio)
-	_cambiar_pantalla(vista)
 
 
 func _on_desconectado(motivo: String) -> void:
@@ -87,16 +89,16 @@ func _on_volver_al_inicio() -> void:
 
 
 func _mostrar_registro(aviso := "") -> void:
-	var vista := VistaRegistro.new()
+	var vista: VistaRegistro = ESCENA_REGISTRO.instantiate()
+	_cambiar_pantalla(vista)
 	var datos := {"nombre": _args.get("cliente", ""), "url": _url_por_defecto(), "color": _args.get("color", "")}
 	if aviso != "":
 		datos.aviso = aviso
 	vista.configurar(partida, controlador_lobby, datos)
-	_cambiar_pantalla(vista)
 
 
-## La pantalla nueva se agrega de inmediato (ya conectada al Modelo, para no perder eventos) y una
-## hoja de papel la destapa a saltos (GestorAnimaciones.transicion_pantalla).
+## La pantalla nueva se agrega de inmediato (quien llama la conecta al Modelo enseguida, para no
+## perder eventos) y una hoja de papel la destapa a saltos (GestorAnimaciones.transicion_pantalla).
 func _cambiar_pantalla(nueva: Control) -> void:
 	if _pantalla:
 		_pantalla.queue_free()
@@ -104,12 +106,6 @@ func _cambiar_pantalla(nueva: Control) -> void:
 	add_child(nueva)
 	Animaciones.transicion_pantalla()
 
-
-func _crear_hoja_de_cuaderno() -> void:
-	var papel := FondoPapel.new()
-	papel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(papel)
-	add_child(Decoraciones.new())
 
 
 # --- Utilidades ---

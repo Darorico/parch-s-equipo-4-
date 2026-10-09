@@ -5,17 +5,19 @@ extends PanelContainer
 ## ControladorTurno. Qué botones están activos lo decide la VistaTablero según las señales del Modelo.
 ## Debajo de los botones muestra, en una sola línea, el último resultado que devolvió el Mock
 ## («Ficha movida N casillas», «¡Éxito! Sacó la ficha…») o el último error.
+## Diseño: views/escenas/panel_acciones.tscn.
 
 signal ficha_elegida(ficha_id: int)
 
-var dado := DadoVista.new()
-var boton_lanzar := Button.new()
-var boton_liberar := Button.new()
-var boton_mover := Button.new()
-var _titulo := Estilo.etiqueta("DADO", 26, Estilo.TITULO, true)
-var _resultado := Estilo.parrafo("Aún no se ha lanzado el dado.", 16, Estilo.TEXTO_SUAVE)
-var _linea_resultado := Estilo.parrafo("", 16)
-var _seccion_fichas := VBoxContainer.new()
+@onready var dado: DadoVista = %Dado
+@onready var boton_lanzar: Button = %BotonLanzar
+@onready var boton_liberar: Button = %BotonLiberar
+@onready var boton_mover: Button = %BotonMover
+@onready var _titulo: Label = %Titulo
+@onready var _resultado: Label = %Resultado
+@onready var _linea_resultado: Label = %LineaResultado
+@onready var _chips_contenedor: HBoxContainer = %Chips
+
 var _chips: Array[Button] = []
 var _grupo := ButtonGroup.new()
 var _controlador: ControladorTurno
@@ -23,65 +25,19 @@ var _puede_lanzar := false
 var _opciones := {}  # Últimas opciones mostradas, para restaurar tras un error.
 
 
-func _init() -> void:
-	var columna := VBoxContainer.new()
-	columna.add_theme_constant_override("separation", 12)
-	add_child(columna)
-
-	var fila_dado := HBoxContainer.new()
-	fila_dado.add_theme_constant_override("separation", 14)
-	fila_dado.add_child(dado)
-	var textos := VBoxContainer.new()
-	textos.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	textos.alignment = BoxContainer.ALIGNMENT_CENTER
-	_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	textos.add_child(_titulo)
-	textos.add_child(_resultado)
-	fila_dado.add_child(textos)
-	columna.add_child(fila_dado)
-
-	boton_lanzar.text = "Lanzar dado"
-	boton_lanzar.theme_type_variation = &"BotonPrimario"
-	boton_lanzar.custom_minimum_size.y = 50
-	boton_lanzar.disabled = true
-	boton_lanzar.pressed.connect(_on_lanzar)
-	columna.add_child(boton_lanzar)
-
-	_seccion_fichas.add_theme_constant_override("separation", 8)
-	_seccion_fichas.add_child(Estilo.resaltado("Fichas disponibles"))
-	var fila_chips := HBoxContainer.new()
-	fila_chips.add_theme_constant_override("separation", 8)
+func _ready() -> void:
 	_grupo.allow_unpress = true
-	for i in 4:
-		var chip := Button.new()
-		chip.text = str(i + 1)
-		chip.tooltip_text = "Ficha %d" % (i + 1)
+	for chip: Button in _chips_contenedor.get_children():
+		chip.set_meta("ficha", _chips.size() + 1)
 		chip.toggle_mode = true
 		chip.button_group = _grupo
-		chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		chip.set_meta("ficha", i + 1)
-		chip.disabled = true
 		chip.toggled.connect(_on_chip.bind(chip))
-		fila_chips.add_child(chip)
 		_chips.append(chip)
-	_seccion_fichas.add_child(fila_chips)
-
-	var fila_botones := HBoxContainer.new()
-	fila_botones.add_theme_constant_override("separation", 8)
-	boton_liberar.text = "Liberar ficha"
-	boton_liberar.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	boton_lanzar.pressed.connect(_on_lanzar)
 	boton_liberar.pressed.connect(_on_liberar)
-	boton_mover.text = "Mover ficha"
-	boton_mover.theme_type_variation = &"BotonPrimario"
-	boton_mover.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	boton_mover.pressed.connect(_on_mover)
-	fila_botones.add_child(boton_liberar)
-	fila_botones.add_child(boton_mover)
-	_seccion_fichas.add_child(fila_botones)
-	columna.add_child(_seccion_fichas)
-
-	_linea_resultado.custom_minimum_size.y = 44
-	columna.add_child(_linea_resultado)
+	boton_lanzar.disabled = true
+	_linea_resultado.text = ""
 	limpiar_opciones()
 
 
@@ -99,8 +55,15 @@ func mostrar_turno(es_mio: bool, nombre: String) -> void:
 	limpiar_opciones()
 
 
-func mostrar_dado(valor: int, nombre: String, es_mio: bool) -> void:
+## Paso 1 del dado: solo lo hace rodar. Devuelve cuánto dura, para no mostrar nada más hasta que termine.
+func animar_dado(valor: int) -> float:
+	_resultado.text = "Lanzando el dado..."
 	dado.animar(valor)
+	return DadoVista.duracion_animacion()
+
+
+## Paso 2 del dado: ya terminó de rodar, ahora se muestra el resultado.
+func revelar_dado(valor: int, nombre: String, es_mio: bool) -> void:
 	_resultado.text = ("Sacaste un %d." if es_mio else nombre + " sacó un %d.") % valor
 
 

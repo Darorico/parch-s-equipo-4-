@@ -1,0 +1,138 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="Script" path="res://views/panel_acciones.gd" id="1_5hne0"]
+[ext_resource type="Script" path="res://views/dado_vista.gd" id="2_83tg6"]
+[ext_resource type="FontVariation" path="res://views/tema/pangolin_negrita.tres" id="3_e8c3l"]
+[ext_resource type="Script" path="res://views/fx/stylebox_crayon.gd" id="4_60vw0"]
+
+[sub_resource type="StyleBox" id="StyleBox_34sj1"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+script = ExtResource("4_60vw0")
+relleno = Color(1, 0.88235295, 0.3019608, 0.8)
+borde = Color(1, 1, 1, 0)
+
+[node name="PanelAcciones" type="PanelContainer"]
+script = ExtResource("1_5hne0")
+
+[node name="Columna" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="FilaDado" type="HBoxContainer" parent="Columna"]
+layout_mode = 2
+theme_override_constants/separation = 14
+
+[node name="Dado" type="Control" parent="Columna/FilaDado"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(72, 72)
+layout_mode = 2
+script = ExtResource("2_83tg6")
+
+[node name="Textos" type="VBoxContainer" parent="Columna/FilaDado"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="Titulo" type="Label" parent="Columna/FilaDado/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_e8c3l")
+theme_override_font_sizes/font_size = 26
+theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
+text = "DADO"
+autowrap_mode = 3
+
+[node name="Resultado" type="Label" parent="Columna/FilaDado/Textos"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.30980393, 0.3529412, 0.43137255, 1)
+text = "Aún no se ha lanzado el dado."
+autowrap_mode = 3
+
+[node name="BotonLanzar" type="Button" parent="Columna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 46)
+layout_mode = 2
+theme_type_variation = &"BotonPrimario"
+text = "Lanzar dado"
+
+[node name="SeccionFichas" type="VBoxContainer" parent="Columna"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="RotuloFichas" type="PanelContainer" parent="Columna/SeccionFichas"]
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_34sj1")
+
+[node name="@Label@9" type="Label" parent="Columna/SeccionFichas/RotuloFichas"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("3_e8c3l")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "FICHAS DISPONIBLES"
+
+[node name="Chips" type="HBoxContainer" parent="Columna/SeccionFichas"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="Ficha1" type="Button" parent="Columna/SeccionFichas/Chips"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Ficha 1"
+text = "1"
+
+[node name="Ficha2" type="Button" parent="Columna/SeccionFichas/Chips"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Ficha 2"
+text = "2"
+
+[node name="Ficha3" type="Button" parent="Columna/SeccionFichas/Chips"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Ficha 3"
+text = "3"
+
+[node name="Ficha4" type="Button" parent="Columna/SeccionFichas/Chips"]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Ficha 4"
+text = "4"
+
+[node name="Botones" type="HBoxContainer" parent="Columna/SeccionFichas"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="BotonLiberar" type="Button" parent="Columna/SeccionFichas/Botones"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Liberar ficha"
+
+[node name="BotonMover" type="Button" parent="Columna/SeccionFichas/Botones"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"BotonPrimario"
+text = "Mover ficha"
+
+[node name="LineaResultado" type="Label" parent="Columna"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "Aquí aparece el resultado del turno."
+autowrap_mode = 3

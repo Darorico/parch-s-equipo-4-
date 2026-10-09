@@ -1,0 +1,166 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="Script" path="res://views/vista_tablero.gd" id="1_221de"]
+[ext_resource type="Shader" path="res://views/fx/papel.gdshader" id="2_k34fd"]
+[ext_resource type="Script" path="res://views/fx/fondo_papel.gd" id="3_kacps"]
+[ext_resource type="Script" path="res://views/fx/decoraciones.gd" id="4_t562v"]
+[ext_resource type="Script" path="res://views/fx/stylebox_crayon.gd" id="5_8tpvt"]
+[ext_resource type="FontVariation" path="res://views/tema/pangolin_negrita.tres" id="6_lua3w"]
+[ext_resource type="Script" path="res://views/tablero_dibujo.gd" id="7_50clq"]
+[ext_resource type="PackedScene" path="res://views/escenas/panel_jugadores.tscn" id="8_4re6w"]
+[ext_resource type="Script" path="res://views/panel_jugadores.gd" id="9_1dwu5"]
+[ext_resource type="PackedScene" path="res://views/escenas/panel_acciones.tscn" id="10_hak5t"]
+[ext_resource type="Script" path="res://views/panel_acciones.gd" id="11_qq3ij"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8nco3"]
+shader = ExtResource("2_k34fd")
+
+[sub_resource type="StyleBox" id="StyleBox_vqib8"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 10.0
+content_margin_top = 3.0
+content_margin_right = 10.0
+content_margin_bottom = 3.0
+script = ExtResource("5_8tpvt")
+relleno = Color(0.16862746, 0.14901961, 0.13333334, 1)
+borde = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBox" id="StyleBox_7vv2a"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+script = ExtResource("5_8tpvt")
+relleno = Color(1, 0.88235295, 0.3019608, 0.8)
+borde = Color(1, 1, 1, 0)
+
+[node name="VistaTablero" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_221de")
+
+[node name="Papel" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_8nco3")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("3_kacps")
+
+[node name="Decoraciones" type="Control" parent="."]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("4_t562v")
+
+[node name="Contenido" type="MarginContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 16
+
+[node name="Columna" type="VBoxContainer" parent="Contenido"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Encabezado" type="HBoxContainer" parent="Contenido/Columna"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="@VBoxContainer@47" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="@HBoxContainer@50" type="HBoxContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@47"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@PanelContainer@49" type="PanelContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@47/@HBoxContainer@50"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_vqib8")
+
+[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@47/@HBoxContainer@50/@PanelContainer@49"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_lua3w")
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9843137, 0.98039216, 0.9647059, 1)
+text = "03"
+
+[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@47/@HBoxContainer@50"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_lua3w")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.18431373, 0.43529412, 0.8392157, 1)
+text = "TABLERO Y TURNO"
+
+[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@47"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_lua3w")
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
+text = "Tablero central y turno activo"
+
+[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@47"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.30980393, 0.3529412, 0.43137255, 1)
+text = "Cada jugador ve su avatar, su color, sus fichas en meta y de quién es el turno."
+
+[node name="@PanelContainer@52" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_7vv2a")
+
+[node name="@Label@51" type="Label" parent="Contenido/Columna/Encabezado/@PanelContainer@52"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_lua3w")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "PARCHÍS CLUB"
+
+[node name="Cuerpo" type="HBoxContainer" parent="Contenido/Columna"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 22
+
+[node name="Tablero" type="Control" parent="Contenido/Columna/Cuerpo"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 420)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("7_50clq")
+
+[node name="Lateral" type="ScrollContainer" parent="Contenido/Columna/Cuerpo"]
+custom_minimum_size = Vector2(370, 0)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="Paneles" type="VBoxContainer" parent="Contenido/Columna/Cuerpo/Lateral"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 14
+
+[node name="PanelJugadores" type="PanelContainer" parent="Contenido/Columna/Cuerpo/Lateral/Paneles" instance=ExtResource("8_4re6w")]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("9_1dwu5")
+
+[node name="PanelAcciones" type="PanelContainer" parent="Contenido/Columna/Cuerpo/Lateral/Paneles" instance=ExtResource("10_hak5t")]
+unique_name_in_owner = true
+layout_mode = 2
+script = ExtResource("11_qq3ij")

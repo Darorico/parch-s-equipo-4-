@@ -1,20 +1,21 @@
 class_name VistaTablero
-extends MarginContainer
+extends Control
 ## Pantallas 03 y 04 del storyboard: tablero central, turno activo y selección de ficha.
+## Diseño: views/escenas/vista_tablero.tscn (el tablero y los paneles se editan ahí).
 ##
 ## OBSERVADOR del Modelo: se suscribe a las señales de Partida y repinta sus subvistas con los datos
 ## que traen. Nunca consulta al Modelo; las acciones del usuario van al ControladorTurno.
-## Los eventos se presentan en orden y esperando a que termine cada animación (el dado rodando, la
-## ficha avanzando casilla por casilla) antes de mostrar el siguiente, por ejemplo el cambio de turno.
+## Los eventos se presentan en orden y esperando a que termine cada animación: primero el dado
+## rueda, al terminar se muestra su resultado, luego la ficha avanza casilla por casilla y al final
+## se muestra el cambio de turno.
 
 signal volver_al_inicio
 
-const PAUSA_DADO := 0.75
+@onready var tablero: TableroDibujo = %Tablero
+@onready var panel_jugadores: PanelJugadores = %PanelJugadores
+@onready var panel_acciones: PanelAcciones = %PanelAcciones
+@onready var _encabezado: Control = %Encabezado
 
-var tablero := TableroDibujo.new()
-var panel_jugadores := PanelJugadores.new()
-var panel_acciones := PanelAcciones.new()
-var _encabezado: HBoxContainer
 var _mi_id := 0
 var _nombres := {}  # jugador_id -> nombre (de lo recibido en las señales)
 var _movibles: Array = []
@@ -22,39 +23,11 @@ var _cola: Array = []  # [[Callable, pausa]]
 var _procesando := false
 
 
-func _init() -> void:
-	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	for lado in ["left", "right"]:
-		add_theme_constant_override("margin_" + lado, 40)
-	for lado in ["top", "bottom"]:
-		add_theme_constant_override("margin_" + lado, 16)
-
-	var raiz := VBoxContainer.new()
-	raiz.add_theme_constant_override("separation", 10)
-	add_child(raiz)
-	_encabezado = Estilo.encabezado("", "", "", "")
-	raiz.add_child(_encabezado)
+func _ready() -> void:
 	_encabezado_normal()
 
-	var cuerpo := HBoxContainer.new()
-	cuerpo.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	cuerpo.add_theme_constant_override("separation", 22)
-	raiz.add_child(cuerpo)
-	cuerpo.add_child(tablero)
 
-	var desplazable := ScrollContainer.new()
-	desplazable.custom_minimum_size.x = 370
-	desplazable.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
-	cuerpo.add_child(desplazable)
-	var lateral := VBoxContainer.new()
-	lateral.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	lateral.add_theme_constant_override("separation", 14)
-	lateral.add_child(panel_jugadores)
-	lateral.add_child(panel_acciones)
-	desplazable.add_child(lateral)
-
-
-## `jugadores` son los datos que trajo la señal partida_iniciada.
+## Se llama después de agregar la vista al árbol. `jugadores` son los datos de partida_iniciada.
 func configurar(partida: Partida, controlador: ControladorTurno, mi_id: int, jugadores: Array) -> void:
 	_mi_id = mi_id
 	panel_acciones.configurar(controlador)
@@ -83,8 +56,10 @@ func _on_turno_cambiado(jugador_id: int) -> void:
 	_encolar(_mostrar_turno.bind(jugador_id))
 
 
+## El dado se presenta en dos pasos: rueda (la cola espera a que termine) y luego se revela el valor.
 func _on_dado_lanzado(jugador_id: int, valor: int) -> void:
-	_encolar(_mostrar_dado.bind(jugador_id, valor), PAUSA_DADO)
+	_encolar(panel_acciones.animar_dado.bind(valor))
+	_encolar(panel_acciones.revelar_dado.bind(valor, _nombre(jugador_id), jugador_id == _mi_id))
 
 
 func _on_opciones_turno(jugador_id: int, movibles: Array, puede_liberar: bool) -> void:
@@ -124,10 +99,6 @@ func _mostrar_turno(jugador_id: int) -> void:
 	_encabezado_normal()
 
 
-func _mostrar_dado(jugador_id: int, valor: int) -> void:
-	panel_acciones.mostrar_dado(valor, _nombre(jugador_id), jugador_id == _mi_id)
-
-
 func _mostrar_opciones(jugador_id: int, movibles: Array, puede_liberar: bool) -> void:
 	if jugador_id != _mi_id:
 		return
@@ -161,6 +132,7 @@ func _mostrar_fin(ganador_id: int, motivo: String) -> void:
 	var tarjeta := Estilo.tarjeta("Resultado final", columna)
 	tarjeta.add_theme_stylebox_override("panel", Estilo.caja(Estilo.PAPEL, Estilo.LAPIZ, 22.0))
 	var centro := CenterContainer.new()
+	centro.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	centro.add_child(tarjeta)
 	add_child(centro)
 
@@ -180,7 +152,7 @@ func _nombre(jugador_id: int) -> String:
 
 # --- Cola de presentación ---
 
-## `accion` puede devolver un número: los segundos que dura su animación.
+## `accion` puede devolver un número: los segundos que dura su animación (la cola los espera).
 func _encolar(accion: Callable, pausa := 0.0) -> void:
 	_cola.append([accion, pausa])
 	if not _procesando:

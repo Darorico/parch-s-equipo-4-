@@ -1,0 +1,295 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" path="res://views/vista_sala_espera.gd" id="1_bhhap"]
+[ext_resource type="Shader" path="res://views/fx/papel.gdshader" id="2_gww8n"]
+[ext_resource type="Script" path="res://views/fx/fondo_papel.gd" id="3_to05b"]
+[ext_resource type="Script" path="res://views/fx/decoraciones.gd" id="4_24b5c"]
+[ext_resource type="Script" path="res://views/fx/stylebox_crayon.gd" id="5_inpdt"]
+[ext_resource type="FontVariation" path="res://views/tema/pangolin_negrita.tres" id="6_2lmg2"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uq6d8"]
+shader = ExtResource("2_gww8n")
+
+[sub_resource type="StyleBox" id="StyleBox_24st6"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 10.0
+content_margin_top = 3.0
+content_margin_right = 10.0
+content_margin_bottom = 3.0
+script = ExtResource("5_inpdt")
+relleno = Color(0.16862746, 0.14901961, 0.13333334, 1)
+borde = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBox" id="StyleBox_gf0eb"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+script = ExtResource("5_inpdt")
+relleno = Color(1, 0.88235295, 0.3019608, 0.8)
+borde = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBox" id="StyleBox_6aphh"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+script = ExtResource("5_inpdt")
+relleno = Color(0.5568628, 0.7882353, 0.9372549, 0.55)
+borde = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBox" id="StyleBox_43o6m"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 8.0
+content_margin_bottom = 2.0
+script = ExtResource("5_inpdt")
+relleno = Color(1, 0.88235295, 0.3019608, 0.8)
+borde = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBox" id="StyleBox_r4k66"]
+resource_local_to_scene = false
+resource_name = ""
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+script = ExtResource("5_inpdt")
+relleno = Color(0.56078434, 0.81960785, 0.43137255, 0.7)
+borde = Color(1, 1, 1, 0)
+
+[node name="VistaSalaEspera" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_bhhap")
+
+[node name="Papel" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_uq6d8")
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("3_to05b")
+
+[node name="Decoraciones" type="Control" parent="."]
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("4_24b5c")
+
+[node name="Contenido" type="MarginContainer" parent="."]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 40
+theme_override_constants/margin_top = 26
+theme_override_constants/margin_right = 40
+theme_override_constants/margin_bottom = 26
+
+[node name="Columna" type="VBoxContainer" parent="Contenido"]
+layout_mode = 2
+theme_override_constants/separation = 22
+
+[node name="Encabezado" type="HBoxContainer" parent="Contenido/Columna"]
+layout_mode = 2
+
+[node name="@VBoxContainer@30" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="@HBoxContainer@33" type="HBoxContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@30"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="@PanelContainer@32" type="PanelContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@30/@HBoxContainer@33"]
+layout_mode = 2
+size_flags_vertical = 4
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_24st6")
+
+[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30/@HBoxContainer@33/@PanelContainer@32"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 14
+theme_override_colors/font_color = Color(0.9843137, 0.98039216, 0.9647059, 1)
+text = "02"
+
+[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30/@HBoxContainer@33"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.18431373, 0.43529412, 0.8392157, 1)
+text = "SALA DE ESPERA / ARRANQUE"
+
+[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 36
+theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
+text = "Espera a que todos confirmen"
+
+[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.30980393, 0.3529412, 0.43137255, 1)
+text = "De 2 a 4 jugadores. La partida arranca cuando todos los registrados están listos."
+
+[node name="@PanelContainer@35" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_gf0eb")
+
+[node name="@Label@34" type="Label" parent="Contenido/Columna/Encabezado/@PanelContainer@35"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "PARCHÍS CLUB"
+
+[node name="Centro" type="HBoxContainer" parent="Contenido/Columna"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TarjetaSala" type="PanelContainer" parent="Contenido/Columna/Centro"]
+layout_mode = 2
+
+[node name="@VBoxContainer@37" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="@Label@36" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
+text = "SALA DE ESPERA"
+
+[node name="Sala" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37"]
+custom_minimum_size = Vector2(460, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Lista" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="CajaResumen" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_6aphh")
+
+[node name="Resumen" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala/CajaResumen"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 19
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "0/1 listos · se necesitan al menos 2 jugadores y que todos confirmen."
+autowrap_mode = 3
+
+[node name="BotonListo" type="Button" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+theme_type_variation = &"BotonPrimario"
+theme_override_font_sizes/font_size = 30
+text = "LISTO"
+
+[node name="Estado" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
+autowrap_mode = 3
+
+[node name="TarjetaEstado" type="PanelContainer" parent="Contenido/Columna/Centro"]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="@VBoxContainer@46" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaEstado"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="@Label@45" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 30
+theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
+text = "ESTADO DE LA PARTIDA"
+
+[node name="EstadoPartida" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46"]
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Conectados" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 22
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "1 de 4 jugadores conectados"
+
+[node name="@PanelContainer@39" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+layout_mode = 2
+size_flags_horizontal = 0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBox_43o6m")
+
+[node name="@Label@38" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida/@PanelContainer@39"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("6_2lmg2")
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "REGLAS ACTIVAS"
+
+[node name="@Label@40" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "• De 2 a 4 jugadores pueden jugar."
+autowrap_mode = 3
+
+[node name="@Label@41" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "• Todos deben confirmar «Listo» antes de arrancar."
+autowrap_mode = 3
+
+[node name="@Label@42" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 17
+theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
+text = "• El sistema elige al azar quién empieza; los turnos siguen el sentido horario."
+autowrap_mode = 3
+
+[node name="@PanelContainer@44" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBox_r4k66")
+
+[node name="@Label@43" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida/@PanelContainer@44"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 16
+theme_override_colors/font_color = Color(0.11764706, 0.3529412, 0.15294118, 1)
+text = "Al iniciar, todos ven el mismo tablero y el turno del primer jugador."
+autowrap_mode = 3
