@@ -1,9 +1,11 @@
+@tool
 class_name DadoVista
 extends Control
 ## Dado dibujado a lápiz. Al recibir un valor «rueda» unos cuadros a saltos (stop-motion),
 ## ladeándose en cada cuadro, y se queda en ese valor.
 
-const CUADROS_ANIMACION := 5
+## Cuántos cuadros rueda el dado antes de mostrar el resultado.
+const CUADROS_ANIMACION := 4
 const PUNTOS := {
 	1: [Vector2(0, 0)],
 	2: [Vector2(-1, -1), Vector2(1, 1)],
@@ -13,14 +15,23 @@ const PUNTOS := {
 	6: [Vector2(-1, -1), Vector2(1, -1), Vector2(-1, 0), Vector2(1, 0), Vector2(-1, 1), Vector2(1, 1)],
 }
 
-var valor := 0
+## Cara que se muestra (0 = «?»). Se puede cambiar en el Inspector para ver cómo queda.
+@export_range(0, 6) var valor := 0:
+	set(nuevo):
+		valor = nuevo
+		queue_redraw()
 var _inclinacion := 0.0
 var _animacion := 0
 
 
 func _init() -> void:
 	custom_minimum_size = Vector2(80, 80)
-	add_to_group(Animaciones.GRUPO_VIVO)
+	add_to_group(Garabato.GRUPO_VIVO)
+
+
+## Segundos que dura animar(); quien la llama espera esto antes de mostrar el resultado.
+static func duracion_animacion() -> float:
+	return (CUADROS_ANIMACION + 1) / Animaciones.CUADROS_POR_SEGUNDO
 
 
 func animar(valor_final: int) -> void:

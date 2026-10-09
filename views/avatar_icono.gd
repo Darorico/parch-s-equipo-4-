@@ -1,3 +1,4 @@
+@tool
 class_name AvatarIcono
 extends Control
 ## Avatar de un jugador dibujado a crayón: un círculo de lápiz de su color con la figura elegida
@@ -6,11 +7,13 @@ extends Control
 
 const FORMAS := ["Estrella", "Rombo", "Anillo", "Triángulo"]
 
-var color := Color.GRAY:
+## Color del jugador.
+@export var color := Color.GRAY:
 	set(valor):
 		color = valor
 		queue_redraw()
-var forma := 0:
+## Figura del avatar: 0 estrella, 1 rombo, 2 anillo, 3 triángulo; -1 solo bolita de color.
+@export_range(-1, 3) var forma := 0:
 	set(valor):
 		forma = valor
 		queue_redraw()
@@ -21,7 +24,7 @@ func _init(p_color := Color.GRAY, p_forma := 0, tamano := 36.0) -> void:
 	forma = p_forma
 	custom_minimum_size = Vector2(tamano, tamano)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_to_group(Animaciones.GRUPO_VIVO)
+	add_to_group(Garabato.GRUPO_VIVO)
 
 
 func _draw() -> void:

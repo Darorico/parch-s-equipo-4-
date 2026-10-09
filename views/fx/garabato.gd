@@ -1,3 +1,4 @@
+@tool
 class_name Garabato
 extends RefCounted
 ## Dibujo «a mano» estilo cuaderno escolar: líneas de lápiz temblorosas y rellenos de crayón rayados.
@@ -8,8 +9,10 @@ extends RefCounted
 ## «tiembla» cuadro por cuadro como un dibujo animado en stop-motion (lo avanza GestorAnimaciones).
 
 const LAPIZ := Color("#2b2622")
+## Grupo de nodos que se redibujan en cada cuadro de la animación stop-motion («línea viva»).
+const GRUPO_VIVO := &"garabato_vivo"
 
-## Cuadro actual de la animación stop-motion (≈8 por segundo).
+## Cuadro actual de la animación stop-motion (lo avanza GestorAnimaciones).
 static var cuadro := 0
 
 

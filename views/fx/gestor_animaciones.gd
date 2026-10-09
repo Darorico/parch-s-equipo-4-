@@ -2,7 +2,7 @@ extends Node
 ## GESTOR DE ANIMACIONES (autoload «Animaciones»). Todas las animaciones van en estilo stop-motion
 ## (pocos cuadros por segundo, a saltos), como un dibujo hecho a mano en el cuaderno.
 ##
-##   - Línea viva: ~8 veces por segundo avanza Garabato.cuadro y redibuja los nodos del grupo
+##   - Línea viva: CUADROS_POR_SEGUNDO veces por segundo avanza Garabato.cuadro y redibuja los nodos del grupo
 ##     «garabato_vivo», así los trazos tiemblan como animación cuadro por cuadro.
 ##   - transicion_pantalla(): una hoja de papel tapa la pantalla y se retira a saltos.
 ##   - esperar_cuadros(n): pausa medida en cuadros, para animar a ese ritmo (fichas, dado).
@@ -12,9 +12,11 @@ extends Node
 
 signal cuadro_nuevo(numero: int)
 
-const CUADROS_POR_SEGUNDO := 8
-const GRUPO_VIVO := &"garabato_vivo"
-const PASOS_TRANSICION := 6
+## Velocidad general de las animaciones (1.0 = 8 cuadros por segundo). Con 0.4 van un 60 % más lentas.
+const VELOCIDAD := 0.4
+const CUADROS_POR_SEGUNDO := 8.0 * VELOCIDAD
+const GRUPO_VIVO := Garabato.GRUPO_VIVO
+const PASOS_TRANSICION := 4
 
 ## Desactívalo si en algún equipo la interfaz se siente pesada.
 var linea_viva := true
@@ -39,7 +41,7 @@ func _process(delta: float) -> void:
 
 ## Espera `n` cuadros de la animación stop-motion.
 func esperar_cuadros(n := 1) -> void:
-	await get_tree().create_timer(float(n) / CUADROS_POR_SEGUNDO).timeout
+	await get_tree().create_timer(n / CUADROS_POR_SEGUNDO).timeout
 
 
 ## Transición de pantalla: la hoja empieza tapando todo y se retira hacia la derecha a saltos,

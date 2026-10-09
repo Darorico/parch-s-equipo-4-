@@ -1,3 +1,4 @@
+@tool
 class_name Decoraciones
 extends Control
 ## Garabatos de los márgenes de la hoja, como en las referencias: estrellitas, espirales, rayones de
@@ -9,7 +10,7 @@ const MARRON := Color("#7a4a2a")
 func _init() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_to_group(&"garabato_vivo")
+	add_to_group(Garabato.GRUPO_VIVO)
 
 
 func _draw() -> void:

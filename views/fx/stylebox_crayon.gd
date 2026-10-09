@@ -1,16 +1,39 @@
+@tool
 class_name StyleBoxCrayon
 extends StyleBox
 ## StyleBox «dibujado a mano» para paneles, botones y campos de texto: borde de lápiz tembloroso y
-## relleno de crayón rayado. Se usa desde el tema (Estilo.crear_tema), así toda la interfaz cambia
+## relleno de crayón rayado. Lo usa el tema (views/tema/tema_cuaderno.tres), así toda la interfaz cambia
 ## de estilo sin tocar cada pantalla.
 
-var relleno := Color.TRANSPARENT
-var borde := Garabato.LAPIZ
-var ancho_borde := 2.2
-var temblor := 1.4
-var separacion_rayado := 4.0
+## Color del relleno de crayón (transparente = sin relleno).
+@export var relleno := Color.TRANSPARENT:
+	set(valor):
+		relleno = valor
+		emit_changed()
+## Color del borde de lápiz (transparente = sin borde).
+@export var borde := Garabato.LAPIZ:
+	set(valor):
+		borde = valor
+		emit_changed()
+@export_range(0.5, 6.0, 0.1) var ancho_borde := 2.2:
+	set(valor):
+		ancho_borde = valor
+		emit_changed()
+## Cuánto ondula el trazo del lápiz.
+@export_range(0.0, 5.0, 0.1) var temblor := 1.4:
+	set(valor):
+		temblor = valor
+		emit_changed()
+## Distancia entre las rayas del crayón (más chica = más relleno).
+@export_range(2.0, 12.0, 0.5) var separacion_rayado := 4.0:
+	set(valor):
+		separacion_rayado = valor
+		emit_changed()
 ## Un segundo trazo tenue, como cuando se repasa con el lápiz.
-var doble_trazo := true
+@export var doble_trazo := true:
+	set(valor):
+		doble_trazo = valor
+		emit_changed()
 
 
 func _init(p_relleno := Color.TRANSPARENT, p_borde := Garabato.LAPIZ, margen := 12.0) -> void:

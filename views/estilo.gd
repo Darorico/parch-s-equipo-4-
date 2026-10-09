@@ -1,9 +1,15 @@
+@tool
 class_name Estilo
 extends RefCounted
-## Dirección de arte «cuaderno escolar»: paleta de crayones, fuente Pangolin y tema de la interfaz
-## dibujado a mano (StyleBoxCrayon). Todas las pantallas toman sus piezas visuales de aquí.
+## Dirección de arte «cuaderno escolar»: paleta de crayones, fuente Pangolin y piezas visuales que
+## se crean desde código. El tema de la interfaz está en views/tema/tema_cuaderno.tres (se edita en
+## el editor) y el diseño de cada pantalla en views/escenas/.
 
 const FUENTE := preload("res://assets/fuentes/Pangolin-Regular.ttf")
+## Pangolin «repasada» (más gruesa). Es un recurso para que las escenas y el tema la compartan.
+const RUTA_NEGRITA := "res://views/tema/pangolin_negrita.tres"
+## Tema de toda la interfaz (también es el tema del proyecto, así se ve igual en el editor).
+const RUTA_TEMA := "res://views/tema/tema_cuaderno.tres"
 
 const PAPEL := Color("#fbfaf6")
 const LAPIZ := Garabato.LAPIZ
@@ -43,55 +49,18 @@ static func fuente() -> Font:
 ## Pangolin «repasada»: la misma fuente con trazo más grueso, para títulos y botones.
 static func negrita() -> Font:
 	if _negrita == null:
-		_negrita = FontVariation.new()
-		_negrita.base_font = FUENTE
-		_negrita.variation_embolden = 0.6
+		if ResourceLoader.exists(RUTA_NEGRITA):
+			_negrita = load(RUTA_NEGRITA)
+		else:
+			_negrita = FontVariation.new()
+			_negrita.base_font = FUENTE
+			_negrita.variation_embolden = 0.6
 	return _negrita
 
 
 ## Caja dibujada a mano: relleno de crayón (o transparente) y borde de lápiz (o sin borde).
 static func caja(relleno: Color, borde := Color.TRANSPARENT, margen := 12.0) -> StyleBoxCrayon:
 	return StyleBoxCrayon.new(relleno, borde, margen)
-
-
-static func crear_tema() -> Theme:
-	var tema := Theme.new()
-	tema.default_font = FUENTE
-	tema.default_font_size = 18
-	tema.set_color("font_color", "Label", TEXTO)
-
-	tema.set_stylebox("panel", "PanelContainer", caja(Color(1, 1, 1, 0.0), LAPIZ, 18.0))
-
-	_estilos_boton(tema, "Button", Color(1, 1, 1, 0.0), Color(RESALTADOR, 0.55), PRIMARIO_SUAVE, TEXTO, TEXTO)
-	tema.set_type_variation("BotonPrimario", "Button")
-	_estilos_boton(tema, "BotonPrimario", PRIMARIO, PRIMARIO_OSCURO, PRIMARIO_OSCURO, TEXTO_BOTON, TEXTO_BOTON)
-	tema.set_font("font", "BotonPrimario", negrita())
-	tema.set_font_size("font_size", "BotonPrimario", 22)
-
-	var campo := caja(Color(1, 1, 1, 0.0), LAPIZ, 10.0)
-	campo.doble_trazo = false
-	var campo_foco := caja(Color(PRIMARIO_SUAVE, 0.25), PRIMARIO, 10.0)
-	tema.set_stylebox("normal", "LineEdit", campo)
-	tema.set_stylebox("focus", "LineEdit", campo_foco)
-	tema.set_color("font_color", "LineEdit", TEXTO)
-	tema.set_color("font_placeholder_color", "LineEdit", TEXTO_SUAVE)
-	tema.set_color("caret_color", "LineEdit", TEXTO)
-	return tema
-
-
-static func _estilos_boton(tema: Theme, tipo: String, normal: Color, hover: Color, presionado: Color,
-		texto: Color, texto_presionado: Color) -> void:
-	tema.set_stylebox("normal", tipo, caja(normal, LAPIZ, 10.0))
-	tema.set_stylebox("hover", tipo, caja(hover, LAPIZ, 10.0))
-	tema.set_stylebox("pressed", tipo, caja(presionado, PRIMARIO_OSCURO, 10.0))
-	tema.set_stylebox("hover_pressed", tipo, caja(presionado, PRIMARIO_OSCURO, 10.0))
-	tema.set_stylebox("disabled", tipo, caja(Color(DESHABILITADO, 0.45), Color(LAPIZ, 0.35), 10.0))
-	tema.set_stylebox("focus", tipo, StyleBoxEmpty.new())
-	for estado in ["font_color", "font_hover_color", "font_focus_color"]:
-		tema.set_color(estado, tipo, texto)
-	tema.set_color("font_pressed_color", tipo, texto_presionado)
-	tema.set_color("font_hover_pressed_color", tipo, texto_presionado)
-	tema.set_color("font_disabled_color", tipo, Color(TEXTO_SUAVE, 0.6))
 
 
 static func etiqueta(texto: String, tamano := 18, color := TEXTO, en_negrita := false) -> Label:
@@ -112,45 +81,6 @@ static func parrafo(texto: String, tamano := 17, color := TEXTO) -> Label:
 	return label
 
 
-## Rótulo de campo en mayúsculas («NOMBRE DE USUARIO», «COLOR DE FICHA»…).
-static func rotulo(texto: String) -> Label:
-	return etiqueta(texto.to_upper(), 16, TEXTO)
-
-
-## Rótulo marcado con resaltador amarillo («REGLAS ACTIVAS», «FICHAS DISPONIBLES»).
-static func resaltado(texto: String) -> PanelContainer:
-	var panel := PanelContainer.new()
-	var estilo := caja(Color(RESALTADOR, 0.8), Color.TRANSPARENT, 2.0)
-	estilo.content_margin_left = 8
-	estilo.content_margin_right = 8
-	panel.add_theme_stylebox_override("panel", estilo)
-	panel.add_child(etiqueta(texto.to_upper(), 18, TEXTO, true))
-	panel.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return panel
-
-
-## Mancha de crayón con un texto corto («ESPERANDO», «LISTO», «TURNO»).
-static func pildora(texto: String, fondo: Color, color_texto: Color) -> PanelContainer:
-	var panel := PanelContainer.new()
-	var estilo := caja(fondo, Color.TRANSPARENT, 3.0)
-	estilo.content_margin_left = 10
-	estilo.content_margin_right = 10
-	panel.add_theme_stylebox_override("panel", estilo)
-	panel.add_child(etiqueta(texto.to_upper(), 14, color_texto, true))
-	panel.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	return panel
-
-
-## Recuadro coloreado a crayón con un texto (aviso celeste, verde, etc.).
-static func aviso(texto: String, fondo := PRIMARIO_SUAVE, color_texto := TEXTO) -> PanelContainer:
-	var panel := PanelContainer.new()
-	panel.add_theme_stylebox_override("panel", caja(Color(fondo, 0.7), Color.TRANSPARENT, 10.0))
-	panel.add_child(parrafo(texto, 16, color_texto))
-	return panel
-
-
 ## Recuadro de lápiz con título en crayón rojo y el contenido debajo.
 static func tarjeta(titulo: String, contenido: Control) -> PanelContainer:
 	var panel := PanelContainer.new()
@@ -161,38 +91,6 @@ static func tarjeta(titulo: String, contenido: Control) -> PanelContainer:
 	columna.add_child(contenido)
 	panel.add_child(columna)
 	return panel
-
-
-## Encabezado de pantalla: número y sección a lápiz, título grande en crayón rojo y el logo.
-## Los textos se pueden cambiar después con los nodos «Numero», «Seccion», «Titulo» y «Subtitulo».
-static func encabezado(numero: String, seccion: String, titulo: String, subtitulo: String) -> HBoxContainer:
-	var fila := HBoxContainer.new()
-	var textos := VBoxContainer.new()
-	textos.add_theme_constant_override("separation", 0)
-	textos.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	fila.add_child(textos)
-
-	var linea := HBoxContainer.new()
-	linea.add_theme_constant_override("separation", 8)
-	var pill := pildora(numero, LAPIZ, PAPEL)
-	pill.get_child(0).name = "Numero"
-	linea.add_child(pill)
-	var label_seccion := etiqueta(seccion, 16, PRIMARIO, true)
-	label_seccion.name = "Seccion"
-	linea.add_child(label_seccion)
-	textos.add_child(linea)
-
-	var label_titulo := etiqueta(titulo, 36, TITULO, true)
-	label_titulo.name = "Titulo"
-	textos.add_child(label_titulo)
-	var label_subtitulo := etiqueta(subtitulo, 17, TEXTO_SUAVE)
-	label_subtitulo.name = "Subtitulo"
-	textos.add_child(label_subtitulo)
-
-	var logo := resaltado("Parchís Club")
-	logo.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
-	fila.add_child(logo)
-	return fila
 
 
 static func cambiar_encabezado(encabezado_actual: Control, numero: String, seccion: String, titulo: String, subtitulo: String) -> void:

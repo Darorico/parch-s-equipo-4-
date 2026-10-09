@@ -1,3 +1,4 @@
+@tool
 class_name TableroDibujo
 extends Control
 ## Tablero de parchís dibujado a crayón sobre la hoja (19×19 casillas) y sus fichas.
@@ -8,6 +9,9 @@ extends Control
 ## Rendimiento: el tablero se dibuja una sola vez en VARIANTES versiones (canvas items hijos) y en cada
 ## cuadro de la animación solo se muestra una, así «tiembla» en stop-motion sin redibujar todo. Las
 ## fichas sí se dibujan en cada cuadro y avanzan casilla por casilla dando saltitos.
+##
+## En el editor (views/escenas/vista_tablero.tscn) se dibuja con fichas de ejemplo y sus propiedades
+## se pueden ajustar en el Inspector (sección «Dibujo del tablero»).
 
 signal ficha_clicada(ficha_id: int)
 
@@ -34,6 +38,34 @@ const DESPLAZAMIENTOS := [Vector2(-0.2, -0.2), Vector2(0.2, 0.2), Vector2(0.2, -
 ## Las 68 casillas del recorrido en orden de avance (sentido antihorario).
 static var RECORRIDO: Array[Vector2i] = _construir_recorrido()
 
+@export_group("Dibujo del tablero")
+## Grosor de las líneas de lápiz.
+@export_range(0.5, 6.0, 0.1) var grosor_lapiz := 2.4:
+	set(valor):
+		grosor_lapiz = valor
+		_invalidar()
+## Cuánto ondulan las líneas (0 = rectas).
+@export_range(0.0, 5.0, 0.1) var temblor := 1.4:
+	set(valor):
+		temblor = valor
+		_invalidar()
+## Distancia entre las rayas del crayón en casas y pasillos (más chica = color más lleno).
+@export_range(2.0, 12.0, 0.5) var separacion_crayon := 4.5:
+	set(valor):
+		separacion_crayon = valor
+		_invalidar()
+## Tamaño de las fichas en el recorrido, en fracción de casilla.
+@export_range(0.2, 0.5, 0.01) var radio_ficha := 0.42:
+	set(valor):
+		radio_ficha = valor
+		queue_redraw()
+## Solo en el editor: dibuja fichas de ejemplo para ver cómo queda.
+@export var fichas_de_ejemplo := true:
+	set(valor):
+		fichas_de_ejemplo = valor
+		queue_redraw()
+@export_group("")
+
 var _jugadores: Array = []  # [{id, color, fichas: [casillas]}]
 var _visual := {}           # Vector2i(jugador_id, indice) -> casilla mostrada durante una animación
 var _elevadas := {}         # Vector2i(jugador_id, indice) -> true mientras la ficha está en el aire
@@ -52,7 +84,7 @@ func _init() -> void:
 	custom_minimum_size = Vector2(420, 420)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	size_flags_vertical = Control.SIZE_EXPAND_FILL
-	add_to_group(Animaciones.GRUPO_VIVO)
+	add_to_group(Garabato.GRUPO_VIVO)
 
 
 func _notification(que: int) -> void:
@@ -155,7 +187,8 @@ func _draw() -> void:
 	_celda = floorf(minf(size.x, size.y) / N)
 	_origen = ((size - Vector2.ONE * _celda * N) / 2.0).floor()
 	_actualizar_capas()
-	var variante := Garabato.cuadro % VARIANTES if Animaciones.linea_viva else 0
+	var viva := not Engine.is_editor_hint() and Animaciones.linea_viva
+	var variante := Garabato.cuadro % VARIANTES if viva else 0
 	for i in _capas.size():
 		RenderingServer.canvas_item_set_visible(_capas[i], i == variante)
 	_dibujar_fichas()
@@ -174,6 +207,12 @@ func _actualizar_capas() -> void:
 		_capas.append(capa)
 
 
+## Fuerza a redibujar el tablero completo (al cambiar una propiedad en el Inspector).
+func _invalidar() -> void:
+	_tamano_capas = Vector2.ZERO
+	queue_redraw()
+
+
 func _liberar_capas() -> void:
 	for capa in _capas:
 		RenderingServer.free_rid(capa)
@@ -183,16 +222,16 @@ func _liberar_capas() -> void:
 func _dibujar_tablero(ci: RID, s: int) -> void:
 	for color: String in CASAS:
 		var rect := _rect(CASAS[color], Vector2i(8, 8))
-		Garabato.rellenar_rect(ci, rect.grow(-3), Estilo.color_de(color), s + _hash(color), 4.5)
-		Garabato.rect(ci, rect, Garabato.LAPIZ, 2.4, s + _hash(color) + 1, 1.4)
+		Garabato.rellenar_rect(ci, rect.grow(-3), Estilo.color_de(color), s + _hash(color), separacion_crayon)
+		Garabato.rect(ci, rect, Garabato.LAPIZ, grosor_lapiz, s + _hash(color) + 1, temblor)
 		for k in 4:
-			Garabato.circulo(ci, _hueco_casa(color, k), _celda * 0.78, Garabato.LAPIZ, 2.2, s + _hash(color) + 10 + k, 1.0)
+			Garabato.circulo(ci, _hueco_casa(color, k), _celda * 0.78, Garabato.LAPIZ, grosor_lapiz * 0.9, s + _hash(color) + 10 + k, temblor * 0.7)
 
 	for i in RECORRIDO.size():
 		if i in SEGUROS:
 			_casilla_especial(ci, RECORRIDO[i], Estilo.GRIS_SEGURO, s + i)
 		else:
-			Garabato.rect(ci, _rect(RECORRIDO[i]), Color(Garabato.LAPIZ, 0.85), 1.5, s + i * 7, 0.9)
+			Garabato.rect(ci, _rect(RECORRIDO[i]), Color(Garabato.LAPIZ, 0.85), grosor_lapiz * 0.62, s + i * 7, temblor * 0.65)
 	for color: String in SALIDAS:
 		_casilla_especial(ci, RECORRIDO[SALIDAS[color]], Estilo.color_de(color), s + 300 + SALIDAS[color])
 	for color: String in PASILLOS:
@@ -200,8 +239,8 @@ func _dibujar_tablero(ci: RID, s: int) -> void:
 		var direccion: Vector2i = PASILLOS[color][1]
 		for k in 7:
 			var rect := _rect(inicio + direccion * k)
-			Garabato.rellenar_rect(ci, rect.grow(-2), Estilo.color_de(color), s + _hash(color) + 50 + k, 3.5)
-			Garabato.rect(ci, rect, Color(Garabato.LAPIZ, 0.85), 1.5, s + _hash(color) + 70 + k, 0.9)
+			Garabato.rellenar_rect(ci, rect.grow(-2), Estilo.color_de(color), s + _hash(color) + 50 + k, separacion_crayon * 0.78)
+			Garabato.rect(ci, rect, Color(Garabato.LAPIZ, 0.85), grosor_lapiz * 0.62, s + _hash(color) + 70 + k, temblor * 0.65)
 
 	var a := _origen + Vector2(8, 8) * _celda
 	var b := _origen + Vector2(11, 11) * _celda
@@ -212,24 +251,27 @@ func _dibujar_tablero(ci: RID, s: int) -> void:
 	}
 	for color: String in triangulos:
 		var triangulo := PackedVector2Array([triangulos[color][0], triangulos[color][1], centro])
-		Garabato.rellenar(ci, triangulo, Estilo.color_de(color), s + _hash(color) + 90, 3.5)
-		Garabato.contorno(ci, triangulo, Garabato.LAPIZ, 2.0, s + _hash(color) + 91, 1.0)
-	Garabato.rect(ci, Rect2(_origen, Vector2.ONE * _celda * N), Garabato.LAPIZ, 2.8, s + 999, 1.6)
+		Garabato.rellenar(ci, triangulo, Estilo.color_de(color), s + _hash(color) + 90, separacion_crayon * 0.78)
+		Garabato.contorno(ci, triangulo, Garabato.LAPIZ, grosor_lapiz * 0.83, s + _hash(color) + 91, temblor * 0.7)
+	Garabato.rect(ci, Rect2(_origen, Vector2.ONE * _celda * N), Garabato.LAPIZ, grosor_lapiz * 1.15, s + 999, temblor * 1.15)
 
 
 ## Casilla segura o de salida: coloreada a crayón con un circulito al centro.
 func _casilla_especial(ci: RID, celda: Vector2i, color: Color, semilla: int) -> void:
 	var rect := _rect(celda)
-	Garabato.rellenar_rect(ci, rect.grow(-2), color, semilla, 3.0)
+	Garabato.rellenar_rect(ci, rect.grow(-2), color, semilla, separacion_crayon * 0.67)
 	RenderingServer.canvas_item_add_circle(ci, rect.get_center(), _celda * 0.27, Estilo.PAPEL)
-	Garabato.circulo(ci, rect.get_center(), _celda * 0.27, Garabato.LAPIZ, 1.6, semilla + 1, 0.5)
-	Garabato.rect(ci, rect, Garabato.LAPIZ, 1.6, semilla + 2, 0.9)
+	Garabato.circulo(ci, rect.get_center(), _celda * 0.27, Garabato.LAPIZ, grosor_lapiz * 0.67, semilla + 1, temblor * 0.35)
+	Garabato.rect(ci, rect, Garabato.LAPIZ, grosor_lapiz * 0.67, semilla + 2, temblor * 0.65)
 
 
 func _dibujar_fichas() -> void:
 	_zonas_clic.clear()
 	var por_casilla := {}
-	for jugador: Dictionary in _jugadores:
+	var jugadores := _jugadores
+	if Engine.is_editor_hint() and jugadores.is_empty() and fichas_de_ejemplo:
+		jugadores = _jugadores_de_ejemplo()
+	for jugador: Dictionary in jugadores:
 		var fichas: Array = jugador.fichas
 		for k in fichas.size():
 			var casilla: int = _visual.get(Vector2i(jugador.id, k), fichas[k])
@@ -242,9 +284,9 @@ func _dibujar_fichas() -> void:
 		var centro := _rect(RECORRIDO[casilla]).get_center()
 		for n in grupo.size():
 			if grupo.size() == 1:
-				_dibujar_ficha(grupo[n][0], grupo[n][1], centro, _celda * 0.42)
+				_dibujar_ficha(grupo[n][0], grupo[n][1], centro, _celda * radio_ficha)
 			else:
-				_dibujar_ficha(grupo[n][0], grupo[n][1], centro + DESPLAZAMIENTOS[n % 4] * _celda, _celda * 0.3)
+				_dibujar_ficha(grupo[n][0], grupo[n][1], centro + DESPLAZAMIENTOS[n % 4] * _celda, _celda * radio_ficha * 0.72)
 
 
 func _dibujar_ficha(jugador: Dictionary, indice: int, centro: Vector2, radio: float) -> void:
@@ -279,6 +321,16 @@ func _hueco_casa(color: String, k: int) -> Vector2:
 
 func _rect(celda: Vector2i, tamano := Vector2i.ONE) -> Rect2:
 	return Rect2(_origen + Vector2(celda) * _celda, Vector2(tamano) * _celda)
+
+
+## Fichas que se ven en el editor para orientarse (no se usan en el juego).
+static func _jugadores_de_ejemplo() -> Array:
+	return [
+		{"id": 1, "color": "rojo", "fichas": [4, 9, -1, -1]},
+		{"id": 2, "color": "verde", "fichas": [55, -1, -1, -1]},
+		{"id": 3, "color": "amarillo", "fichas": [-1, -1, -1, -1]},
+		{"id": 4, "color": "azul", "fichas": [21, 30, 30, -1]},
+	]
 
 
 static func _hash(texto: String) -> int:
