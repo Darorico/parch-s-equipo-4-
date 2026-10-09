@@ -36,14 +36,14 @@ usuario van al Controlador correspondiente.
 
 | Elemento del storyboard | Objeto de presentación | Comportamiento |
 |---|---|---|
-| Tablero de parchís (casas, recorrido, pasillos, meta) | `TableroDibujo` | Dibujado con `_draw()` |
-| Fichas con color e identificador | `TableroDibujo._dibujar_ficha()` | Se mueven con `Partida.ficha_movida` |
+| Tablero de parchís (casas, recorrido, pasillos, meta, seguros grises) | `TableroDibujo` | Dibujado a crayón (`Garabato`) |
+| Fichas con color e identificador | `TableroDibujo._dibujar_ficha()` | Avanzan casilla por casilla en sentido antihorario con `Partida.ficha_movida` |
 | Panel «Jugadores» (avatar, color, fichas en meta) | `PanelJugadores` | Se repinta con `jugadores_actualizados` |
 | Etiqueta «Turno» y fila resaltada | `PanelJugadores.marcar_turno()` | Observa `Partida.turno_cambiado` |
 | Caja «Turno de X · N fichas en meta» | `PanelJugadores._texto_turno` | Observa `turno_cambiado` |
 | Botón «Lanzar dado» | `PanelAcciones.boton_lanzar` → `ControladorTurno.procesar_lanzamiento_dado()` | Activo solo para el jugador en turno |
 | *(agregado)* Cara del dado | `PanelAcciones.dado : DadoVista` | Se anima con `Partida.dado_lanzado` |
-| Caja amarilla de mecánicas | `Bitacora` | Muestra los mensajes de `Partida.mensaje` |
+| Resultado del turno (una línea) | `PanelAcciones._linea_resultado` | Muestra el último `Partida.mensaje` (resultado del Mock) o el último error |
 
 ## Pantalla 04 · Selección de ficha y reglas (CU05, CU06, CU07)
 
@@ -55,7 +55,7 @@ usuario van al Controlador correspondiente.
 | Fichas resaltadas en el tablero | `TableroDibujo.resaltar()` | También se pueden elegir con un clic |
 | *(agregado)* Botón «Liberar ficha» | `PanelAcciones.boton_liberar` → `ControladorTurno.liberar_ficha()` | Solo si `puede_liberar` (salió 5) |
 | Botón «Mover ficha» | `PanelAcciones.boton_mover` → `ControladorTurno.mover_ficha(ficha_id)` | Activo al elegir una ficha |
-| Escenario de captura | Mensaje en `Bitacora` + ficha rival de vuelta en su casa | Simulado por `ReglasMock.enviar_ficha_a_base()` |
+| Escenario de captura | Línea de resultado + ficha rival que salta de vuelta a su casa | Simulado por `ReglasMock.enviar_ficha_a_base()` |
 
 ## Pantalla 05 · Fin del juego (CU10, CU11)
 

@@ -29,7 +29,6 @@ package "views (Vista / objetos de presentación)" <<Folder>> {
     + tablero : TableroDibujo
     + panel_jugadores : PanelJugadores
     + panel_acciones : PanelAcciones
-    + bitacora : Bitacora
     + configurar(partida, controlador, mi_id, jugadores)
     - _on_turno_cambiado(jugador_id)
     - _on_dado_lanzado(jugador_id, valor)
@@ -39,7 +38,7 @@ package "views (Vista / objetos de presentación)" <<Folder>> {
   }
   class TableroDibujo <<boundary>> {
     + mostrar_jugadores(jugadores)
-    + mostrar_posiciones(posiciones)
+    + mostrar_posiciones(posiciones) : float
     + resaltar(jugador_id, movibles, seleccionada)
     -- signal --
     ficha_clicada(ficha_id)
@@ -56,16 +55,47 @@ package "views (Vista / objetos de presentación)" <<Folder>> {
     + mostrar_turno(es_mio, nombre)
     + mostrar_dado(valor, nombre, es_mio)
     + mostrar_opciones(movibles, puede_liberar)
+    + mostrar_resultado(texto, es_error)
     + limpiar_opciones()
   }
   class DadoVista <<boundary>> {
     + valor : int
     + animar(valor_final)
   }
-  class Bitacora <<boundary>> {
-    + agregar(texto)
-  }
 }
+
+package "views/fx (servicios de presentación)" <<Folder>> {
+  class Garabato <<utility>> {
+    + linea(ci, a, b, color, ancho, semilla)
+    + rect(...)  + circulo(...)
+    + rellenar(ci, poligono, color, semilla)
+    + disco(ci, centro, radio, color, semilla)
+  }
+  class StyleBoxCrayon <<StyleBox>> {
+    + relleno : Color
+    + borde : Color
+    - _draw(ci, rect)
+  }
+  class GestorSonidos <<autoload Sonidos>> {
+    + clic() + dado() + ficha_paso()
+    + ficha_sale() + ficha_capturada()
+    + turno_propio() + cambio_pantalla()
+    + reproducir(nombre, tono)
+  }
+  class GestorAnimaciones <<autoload Animaciones>> {
+    + CUADROS_POR_SEGUNDO : int = 8
+    + linea_viva : bool
+    + esperar_cuadros(n)
+    + transicion_pantalla()
+  }
+  class FondoPapel <<ColorRect + shader>>
+  class Decoraciones <<Control>>
+}
+TableroDibujo ..> Garabato
+TableroDibujo ..> GestorAnimaciones : saltos de fichas
+TableroDibujo ..> GestorSonidos
+DadoVista ..> GestorAnimaciones
+PanelAcciones ..> GestorSonidos
 
 package "controllers (Controlador)" <<Folder>> {
   class ControladorTurno <<control>> {
@@ -191,7 +221,6 @@ package "models (Modelo)" <<Folder>> {
 VistaTablero *-- TableroDibujo
 VistaTablero *-- PanelJugadores
 VistaTablero *-- PanelAcciones
-VistaTablero *-- Bitacora
 PanelAcciones *-- DadoVista
 
 ' Observer: las vistas se suscriben a las señales del Modelo (nunca lo consultan)

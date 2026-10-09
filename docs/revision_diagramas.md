@@ -46,7 +46,7 @@ El *Servidor* se queda como actor: es defendible, porque desde el punto de vista
 
 | Análisis (su diagrama) | Diseño / código |
 |---|---|
-| Interfaz | `VistaRegistro`, `VistaSalaEspera`, `VistaTablero` (+ `TableroDibujo`, `PanelJugadores`, `PanelAcciones`, `DadoVista`, `Bitacora`) |
+| Interfaz | `VistaRegistro`, `VistaSalaEspera`, `VistaTablero` (+ `TableroDibujo`, `PanelJugadores`, `PanelAcciones`, `DadoVista`) |
 | ControladorTurno.procesarLanzamientoDado() | `ControladorTurno.procesar_lanzamiento_dado()` |
 | ControladorTurno.liberarFicha() | `ControladorTurno.liberar_ficha()` |
 | ControladorTurno.moverFicha(origen, destino) | `ControladorTurno.mover_ficha(ficha_id)` (el destino lo calcula el subsistema de reglas) |
