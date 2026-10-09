@@ -103,56 +103,56 @@ theme_override_constants/separation = 22
 [node name="Encabezado" type="HBoxContainer" parent="Contenido/Columna"]
 layout_mode = 2
 
-[node name="@VBoxContainer@30" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
+[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="@HBoxContainer@33" type="HBoxContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@30"]
+[node name="Fila" type="HBoxContainer" parent="Contenido/Columna/Encabezado/Columna"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="@PanelContainer@32" type="PanelContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@30/@HBoxContainer@33"]
+[node name="PildoraNumero" type="PanelContainer" parent="Contenido/Columna/Encabezado/Columna/Fila"]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_24st6")
 
-[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30/@HBoxContainer@33/@PanelContainer@32"]
+[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/Columna/Fila/PildoraNumero"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.9843137, 0.98039216, 0.9647059, 1)
 text = "02"
 
-[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30/@HBoxContainer@33"]
+[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/Columna/Fila"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.18431373, 0.43529412, 0.8392157, 1)
 text = "SALA DE ESPERA / ARRANQUE"
 
-[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30"]
+[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/Columna"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 36
 theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
 text = "Espera a que todos confirmen"
 
-[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@30"]
+[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/Columna"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.30980393, 0.3529412, 0.43137255, 1)
 text = "De 2 a 4 jugadores. La partida arranca cuando todos los registrados están listos."
 
-[node name="@PanelContainer@35" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
+[node name="Logo" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_gf0eb")
 
-[node name="@Label@34" type="Label" parent="Contenido/Columna/Encabezado/@PanelContainer@35"]
+[node name="TextoParchisClub" type="Label" parent="Contenido/Columna/Encabezado/Logo"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 18
@@ -167,32 +167,32 @@ alignment = 1
 [node name="TarjetaSala" type="PanelContainer" parent="Contenido/Columna/Centro"]
 layout_mode = 2
 
-[node name="@VBoxContainer@37" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala"]
+[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="@Label@36" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37"]
+[node name="TextoSalaDeEspera" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/Columna"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
 text = "SALA DE ESPERA"
 
-[node name="Sala" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37"]
+[node name="Sala" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala/Columna"]
 custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Lista" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+[node name="Lista" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaSala/Columna/Sala"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="CajaResumen" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+[node name="CajaResumen" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaSala/Columna/Sala"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_6aphh")
 
-[node name="Resumen" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala/CajaResumen"]
+[node name="Resumen" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/Columna/Sala/CajaResumen"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -201,7 +201,7 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "0/1 listos · se necesitan al menos 2 jugadores y que todos confirmen."
 autowrap_mode = 3
 
-[node name="BotonListo" type="Button" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+[node name="BotonListo" type="Button" parent="Contenido/Columna/Centro/TarjetaSala/Columna/Sala"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
@@ -209,7 +209,7 @@ theme_type_variation = &"BotonPrimario"
 theme_override_font_sizes/font_size = 30
 text = "LISTO"
 
-[node name="Estado" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/@VBoxContainer@37/Sala"]
+[node name="Estado" type="Label" parent="Contenido/Columna/Centro/TarjetaSala/Columna/Sala"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -221,23 +221,23 @@ autowrap_mode = 3
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="@VBoxContainer@46" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaEstado"]
+[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaEstado"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="@Label@45" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46"]
+[node name="TextoEstadoDeLa" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
 text = "ESTADO DE LA PARTIDA"
 
-[node name="EstadoPartida" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46"]
+[node name="EstadoPartida" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaEstado/Columna"]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="Conectados" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+[node name="Conectados" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
@@ -245,20 +245,20 @@ theme_override_font_sizes/font_size = 22
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "1 de 4 jugadores conectados"
 
-[node name="@PanelContainer@39" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+[node name="Caja" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida"]
 layout_mode = 2
 size_flags_horizontal = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_43o6m")
 
-[node name="@Label@38" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida/@PanelContainer@39"]
+[node name="TextoReglasActivas" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida/Caja"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_2lmg2")
 theme_override_font_sizes/font_size = 18
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "REGLAS ACTIVAS"
 
-[node name="@Label@40" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+[node name="TextoDe2A" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
@@ -266,7 +266,7 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "• De 2 a 4 jugadores pueden jugar."
 autowrap_mode = 3
 
-[node name="@Label@41" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+[node name="TextoTodosDebenConfirmar" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
@@ -274,7 +274,7 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "• Todos deben confirmar «Listo» antes de arrancar."
 autowrap_mode = 3
 
-[node name="@Label@42" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+[node name="TextoElSistemaElige" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
@@ -282,11 +282,11 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "• El sistema elige al azar quién empieza; los turnos siguen el sentido horario."
 autowrap_mode = 3
 
-[node name="@PanelContainer@44" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida"]
+[node name="Caja2" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_r4k66")
 
-[node name="@Label@43" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/@VBoxContainer@46/EstadoPartida/@PanelContainer@44"]
+[node name="TextoAlIniciarTodos" type="Label" parent="Contenido/Columna/Centro/TarjetaEstado/Columna/EstadoPartida/Caja2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16

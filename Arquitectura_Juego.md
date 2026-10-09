@@ -277,7 +277,7 @@ muestra uno hasta que termina la animación del anterior:
   resaltadas y el cursor cambia a manita sobre ellas.
   - Si no salió 5, el clic mueve la ficha.
   - Si salió 5, aparecen «Liberar ficha» y «Mover ficha». «Liberar» queda sombreado si ya no hay fichas
-    en casa. Para mover, primero se hace clic en la ficha y luego en «Mover ficha».
+	en casa. Para mover, primero se hace clic en la ficha y luego en «Mover ficha».
 - Una **línea de resultado** con el último `mensaje` del Mock (o el error en rojo).
 
 **`TableroDibujo`:**

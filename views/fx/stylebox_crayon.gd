@@ -36,10 +36,13 @@ extends StyleBox
 		emit_changed()
 
 
-func _init(p_relleno := Color.TRANSPARENT, p_borde := Garabato.LAPIZ, margen := 12.0) -> void:
+## `margen` negativo = no tocar los márgenes. Así, al cargar un .tres o una escena (que llaman a _init()
+## sin argumentos después de asignar los márgenes guardados), no se pisan esos valores.
+func _init(p_relleno := Color.TRANSPARENT, p_borde := Garabato.LAPIZ, margen := -1.0) -> void:
 	relleno = p_relleno
 	borde = p_borde
-	set_content_margin_all(margen)
+	if margen >= 0.0:
+		set_content_margin_all(margen)
 
 
 func _draw(ci: RID, r: Rect2) -> void:

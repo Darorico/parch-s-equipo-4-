@@ -93,56 +93,56 @@ theme_override_constants/separation = 12
 [node name="Encabezado" type="HBoxContainer" parent="Contenido/Columna"]
 layout_mode = 2
 
-[node name="@VBoxContainer@10" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
+[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="@HBoxContainer@13" type="HBoxContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@10"]
+[node name="Fila" type="HBoxContainer" parent="Contenido/Columna/Encabezado/Columna"]
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="@PanelContainer@12" type="PanelContainer" parent="Contenido/Columna/Encabezado/@VBoxContainer@10/@HBoxContainer@13"]
+[node name="PildoraNumero" type="PanelContainer" parent="Contenido/Columna/Encabezado/Columna/Fila"]
 layout_mode = 2
 size_flags_vertical = 4
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_jgijr")
 
-[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@10/@HBoxContainer@13/@PanelContainer@12"]
+[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/Columna/Fila/PildoraNumero"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_8k2rt")
 theme_override_font_sizes/font_size = 14
 theme_override_colors/font_color = Color(0.9843137, 0.98039216, 0.9647059, 1)
 text = "01"
 
-[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@10/@HBoxContainer@13"]
+[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/Columna/Fila"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_8k2rt")
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.18431373, 0.43529412, 0.8392157, 1)
 text = "REGISTRO / MEMBRESÍA"
 
-[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@10"]
+[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/Columna"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_8k2rt")
 theme_override_font_sizes/font_size = 36
 theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
 text = "Cada jugador se registra"
 
-[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/@VBoxContainer@10"]
+[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/Columna"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.30980393, 0.3529412, 0.43137255, 1)
 text = "Nombre de usuario, color y avatar. La información se sincroniza con los demás jugadores."
 
-[node name="@PanelContainer@15" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
+[node name="Logo" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBox_6cf1p")
 
-[node name="@Label@14" type="Label" parent="Contenido/Columna/Encabezado/@PanelContainer@15"]
+[node name="TextoParchisClub" type="Label" parent="Contenido/Columna/Encabezado/Logo"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_8k2rt")
 theme_override_font_sizes/font_size = 18
@@ -157,53 +157,53 @@ alignment = 1
 [node name="TarjetaRegistro" type="PanelContainer" parent="Contenido/Columna/Centro"]
 layout_mode = 2
 
-[node name="@VBoxContainer@17" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro"]
+[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="@Label@16" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17"]
+[node name="TextoRegistroIndividual" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_8k2rt")
 theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
 text = "REGISTRO INDIVIDUAL"
 
-[node name="Formulario" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17"]
+[node name="Formulario" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna"]
 custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 theme_override_constants/separation = 5
 
-[node name="@Label@18" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="TextoNombreDeUsuario" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "NOMBRE DE USUARIO"
 
-[node name="Nombre" type="LineEdit" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="Nombre" type="LineEdit" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Ej. Nico"
 max_length = 16
 
-[node name="@Label@19" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="TextoColorDeFicha" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "COLOR DE FICHA"
 
-[node name="OpcionesColor" type="HBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="OpcionesColor" type="HBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="ColorRojo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor"]
+[node name="ColorRojo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = "rojo"
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorRojo"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorRojo"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -211,11 +211,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorRojo/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorRojo/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorRojo/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorRojo/Contenido/Centro"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 mouse_filter = 2
@@ -223,21 +223,21 @@ script = ExtResource("7_acavu")
 color = Color(0.8509804, 0.22745098, 0.16862746, 1)
 forma = -1
 
-[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorRojo/Contenido"]
+[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorRojo/Contenido"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "Rojo"
 horizontal_alignment = 1
 
-[node name="ColorVerde" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor"]
+[node name="ColorVerde" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = "verde"
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorVerde"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorVerde"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -245,11 +245,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorVerde/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorVerde/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorVerde/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorVerde/Contenido/Centro"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 mouse_filter = 2
@@ -257,21 +257,21 @@ script = ExtResource("7_acavu")
 color = Color(0.18039216, 0.61960787, 0.24313726, 1)
 forma = -1
 
-[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorVerde/Contenido"]
+[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorVerde/Contenido"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "Verde"
 horizontal_alignment = 1
 
-[node name="ColorAmarillo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor"]
+[node name="ColorAmarillo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = "amarillo"
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAmarillo"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAmarillo"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -279,11 +279,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAmarillo/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAmarillo/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAmarillo/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAmarillo/Contenido/Centro"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 mouse_filter = 2
@@ -291,21 +291,21 @@ script = ExtResource("7_acavu")
 color = Color(0.9490196, 0.76862746, 0.08627451, 1)
 forma = -1
 
-[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAmarillo/Contenido"]
+[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAmarillo/Contenido"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "Amarillo"
 horizontal_alignment = 1
 
-[node name="ColorAzul" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor"]
+[node name="ColorAzul" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = "azul"
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAzul"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAzul"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -313,11 +313,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAzul/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAzul/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAzul/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAzul/Contenido/Centro"]
 custom_minimum_size = Vector2(30, 30)
 layout_mode = 2
 mouse_filter = 2
@@ -325,32 +325,32 @@ script = ExtResource("7_acavu")
 color = Color(0.18431373, 0.49803922, 0.8392157, 1)
 forma = -1
 
-[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesColor/ColorAzul/Contenido"]
+[node name="Texto" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesColor/ColorAzul/Contenido"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 17
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "Azul"
 horizontal_alignment = 1
 
-[node name="@Label@20" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="TextoAvatar" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "AVATAR"
 
-[node name="OpcionesAvatar" type="HBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="OpcionesAvatar" type="HBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="AvatarEstrella" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar"]
+[node name="AvatarEstrella" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar"]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = 0
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarEstrella"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarEstrella"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -358,25 +358,25 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarEstrella/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarEstrella/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarEstrella/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarEstrella/Contenido/Centro"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 mouse_filter = 2
 script = ExtResource("7_acavu")
 color = Color(0.8509804, 0.22745098, 0.16862746, 1)
 
-[node name="AvatarRombo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar"]
+[node name="AvatarRombo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar"]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = 1
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarRombo"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarRombo"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -384,11 +384,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarRombo/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarRombo/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarRombo/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarRombo/Contenido/Centro"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 mouse_filter = 2
@@ -396,14 +396,14 @@ script = ExtResource("7_acavu")
 color = Color(0.8509804, 0.22745098, 0.16862746, 1)
 forma = 1
 
-[node name="AvatarAnillo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar"]
+[node name="AvatarAnillo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar"]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = 2
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarAnillo"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarAnillo"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -411,11 +411,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarAnillo/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarAnillo/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarAnillo/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarAnillo/Contenido/Centro"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 mouse_filter = 2
@@ -423,14 +423,14 @@ script = ExtResource("7_acavu")
 color = Color(0.8509804, 0.22745098, 0.16862746, 1)
 forma = 2
 
-[node name="AvatarTriángulo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar"]
+[node name="AvatarTriángulo" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar"]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 metadata/valor = 3
 
-[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarTriángulo"]
+[node name="Contenido" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarTriángulo"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -438,11 +438,11 @@ mouse_filter = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarTriángulo/Contenido"]
+[node name="Centro" type="CenterContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarTriángulo/Contenido"]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/OpcionesAvatar/AvatarTriángulo/Contenido/Centro"]
+[node name="Icono" type="Control" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/OpcionesAvatar/AvatarTriángulo/Contenido/Centro"]
 custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 mouse_filter = 2
@@ -450,22 +450,22 @@ script = ExtResource("7_acavu")
 color = Color(0.8509804, 0.22745098, 0.16862746, 1)
 forma = 3
 
-[node name="@Label@21" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="TextoServidor" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 16
 theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "SERVIDOR"
 
-[node name="Servidor" type="LineEdit" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="Servidor" type="LineEdit" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "ws://IP-del-servidor:9080"
 
-[node name="AvisoSincronizacion" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="AvisoSincronizacion" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_87w6n")
 
-[node name="@Label@22" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario/AvisoSincronizacion"]
+[node name="TextoLaInformacionSe" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario/AvisoSincronizacion"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16
@@ -473,7 +473,7 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "La información se sincroniza con el resto de los jugadores al registrarte."
 autowrap_mode = 3
 
-[node name="BotonUnirse" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="BotonUnirse" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 50)
 layout_mode = 2
@@ -481,12 +481,12 @@ theme_type_variation = &"BotonPrimario"
 theme_override_font_sizes/font_size = 26
 text = "UNIRSE A LA PARTIDA"
 
-[node name="BotonHospedar" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="BotonHospedar" type="Button" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Hospedar partida en este equipo"
 
-[node name="Estado" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/@VBoxContainer@17/Formulario"]
+[node name="Estado" type="Label" parent="Contenido/Columna/Centro/TarjetaRegistro/Columna/Formulario"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -498,23 +498,23 @@ autowrap_mode = 3
 layout_mode = 2
 size_flags_vertical = 0
 
-[node name="@VBoxContainer@29" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaConexion"]
+[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaConexion"]
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="@Label@28" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29"]
+[node name="TextoConexionEnRed" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/Columna"]
 layout_mode = 2
 theme_override_fonts/font = ExtResource("6_8k2rt")
 theme_override_font_sizes/font_size = 30
 theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
 text = "CONEXIÓN EN RED"
 
-[node name="Pasos" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29"]
+[node name="Pasos" type="VBoxContainer" parent="Contenido/Columna/Centro/TarjetaConexion/Columna"]
 custom_minimum_size = Vector2(320, 0)
 layout_mode = 2
 theme_override_constants/separation = 10
 
-[node name="@Label@23" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29/Pasos"]
+[node name="Texto1UnEquipo" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/Columna/Pasos"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
@@ -522,7 +522,7 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "1. Un equipo corre el servidor (botón «Hospedar» o scripts/servidor.ps1)."
 autowrap_mode = 3
 
-[node name="@Label@24" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29/Pasos"]
+[node name="Texto2LosDemas" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/Columna/Pasos"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
@@ -530,7 +530,7 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "2. Los demás escriben ws://<IP del servidor>:9080 (IP de la red local o de Tailscale)."
 autowrap_mode = 3
 
-[node name="@Label@25" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29/Pasos"]
+[node name="Texto3Con2" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/Columna/Pasos"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 17
@@ -538,11 +538,11 @@ theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
 text = "3. Con 2 a 4 jugadores registrados, cuando todos confirman «Listo» la partida inicia sola."
 autowrap_mode = 3
 
-[node name="@PanelContainer@27" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29/Pasos"]
+[node name="Caja" type="PanelContainer" parent="Contenido/Columna/Centro/TarjetaConexion/Columna/Pasos"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBox_nqie1")
 
-[node name="@Label@26" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/@VBoxContainer@29/Pasos/@PanelContainer@27"]
+[node name="TextoCadaJugadorUsa" type="Label" parent="Contenido/Columna/Centro/TarjetaConexion/Columna/Pasos/Caja"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 16
