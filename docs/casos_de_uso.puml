@@ -1,0 +1,52 @@
+@startuml casos_de_uso
+' Diagrama de casos de uso corregido (Equipo 4). Mismo contenido que casos_de_uso.drawio.
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecase {
+  BackgroundColor<<nuevo>> #dae8fc
+  BorderColor<<nuevo>> #6c8ebf
+}
+
+actor Jugador
+actor Servidor
+
+rectangle "Parchís" {
+  usecase "CU01 Registrar Jugador" as CU01
+  usecase "CU02 Confirmar Estado" as CU02
+  usecase "CU03 Iniciar Partida" as CU03
+  usecase "CU04 Lanzar Dado" as CU04
+  usecase "CU05 Liberar Ficha" as CU05
+  usecase "CU06 Mover Ficha" as CU06
+  usecase "CU07 Capturar Ficha" as CU07
+  usecase "CU08 Bloquear Camino" as CU08
+  usecase "CU09 Sincronizar Tablero" as CU09
+  usecase "CU10 Gestionar Abandono" as CU10
+  usecase "CU11 Declarar Ganador" as CU11
+  usecase "CU12 Ejercer Turno del Juego" as CU12 <<nuevo>>
+  usecase "CU13 Repetir Tiro" as CU13 <<nuevo>>
+}
+
+Jugador -- CU01
+Jugador -- CU02
+Jugador -- CU12
+Jugador -- CU08
+Jugador -- CU10
+
+CU03 -- Servidor
+CU05 -- Servidor
+CU09 -- Servidor
+CU10 -- Servidor
+CU11 -- Servidor
+
+CU12 ..> CU04 : <<include>>
+CU12 ..> CU06 : <<include>>
+CU12 ..> CU09 : <<include>>
+CU06 ..> CU09 : <<include>>
+
+CU05 ..> CU04 : <<extend>>\nsolo si el dado cae en 5
+CU13 ..> CU04 : <<extend>>\nsi sale 6 (máx. 3 tiros)
+CU07 ..> CU06 : <<extend>>\ncasilla ocupada por un rival
+CU08 ..> CU06 : <<extend>>\nestrategia opcional
+CU11 ..> CU06 : <<extend>>\n4.ª ficha en meta
+CU11 ..> CU10 : <<extend>>\nqueda un único jugador
+@enduml

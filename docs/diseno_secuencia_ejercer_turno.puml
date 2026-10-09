@@ -1,0 +1,125 @@
+@startuml diseno_secuencia_ejercer_turno
+' Diagrama de secuencia de DISEÑO: CU12 Ejercer Turno del Juego.
+' Equipo A = jugador en turno (cliente). Equipo B = otro jugador (cliente). Servidor = modelo autoritativo.
+' Corresponde 1:1 con el código (los nombres de mensajes son los métodos y señales reales).
+autonumber
+skinparam sequenceMessageAlign center
+
+actor "Jugador A" as JA
+participant ":PanelAcciones\n(Vista A)" as VA
+participant ":ControladorTurno\n(A)" as CT
+participant ":Red\n(A)" as RA
+box "Servidor" #f4f6fa
+  participant ":Red\n(servidor)" as RS
+  participant ":Partida\n(modelo autoritativo)" as PS
+  participant ":Dado" as D
+  participant ":Turno" as T
+  participant ":FachadaReglas" as F
+  participant ":ReglasMock" as M
+end box
+participant ":Partida\n(réplica A)" as PA
+participant ":VistaTablero\n(A)" as VTA
+participant ":Partida\n(réplica B)" as PB
+participant ":VistaTablero\n(B)" as VTB
+
+== El turno empieza: el Modelo notifica y las Vistas se repintan (Observer) ==
+PS -> PS : _notificar("turno_cambiado", [A])
+PS --> RS : evento_emitido
+RS --> PA : _cli_evento.rpc("turno_cambiado") [CU09]
+RS --> PB : _cli_evento.rpc("turno_cambiado")
+PA --> VTA : <<signal>> turno_cambiado(A)
+VTA -> VA : mostrar_turno(es_mio = true)
+PB --> VTB : <<signal>> turno_cambiado(A)
+VTB -> VTB : mostrar_turno(es_mio = false)
+
+== CU04 Lanzar Dado ==
+JA -> VA : clic «Lanzar dado»
+VA -> CT : procesar_lanzamiento_dado()
+CT -> RA : solicitar("lanzar_dado")
+RA -> RS : _srv_accion.rpc_id(1, "lanzar_dado")
+RS -> RS : _ejecutar(remitente, ...)
+RS -> PS : lanzar_dado(A)
+PS -> PS : _validar_turno(A, LANZAR)
+PS -> D : generar_valor(fachada)
+D -> F : generar_valor()
+F -> M : generar_valor()
+M --> F : valor (1..6)
+F --> D : valor
+D --> PS : valor
+PS -> PS : _notificar("dado_lanzado", [A, valor])
+PS --> RS : evento_emitido
+RS --> PA : _cli_evento("dado_lanzado") [CU09]
+RS --> PB : _cli_evento("dado_lanzado")
+PA --> VTA : <<signal>> dado_lanzado(A, valor)
+VTA -> VA : mostrar_dado(valor) (animación)
+PB --> VTB : <<signal>> dado_lanzado(A, valor)
+PS -> F : opciones(A, valor)
+F -> M : fichas_movibles(A, valor)\npuede_liberar(A, valor)
+M --> F : movibles, puede_liberar
+F --> PS : {movibles, puede_liberar}
+
+alt sin movimientos posibles (p. ej. todas en casa y no salió 5)
+  PS -> PS : _notificar("mensaje", "...no tiene fichas que mover")
+else hay movimientos
+  PS -> PS : _notificar("opciones_turno", [A, movibles, puede_liberar])
+  PS --> RS : evento_emitido
+  RS --> PA : _cli_evento("opciones_turno")
+  PA --> VTA : <<signal>> opciones_turno(...)
+  VTA -> VA : mostrar_opciones(movibles, puede_liberar)\n(Pantalla 04 «Elige una ficha válida»)
+
+  alt CU05 Liberar Ficha [valor == 5 y fichas en casa]
+    JA -> VA : clic «Liberar ficha»
+    VA -> CT : liberar_ficha()
+    CT -> RA : solicitar("liberar_ficha")
+    RA -> RS : _srv_accion.rpc_id(1, "liberar_ficha")
+    RS -> PS : liberar_ficha(A)
+    PS -> F : liberar_ficha(A, valor)
+    F -> M : posicionar_en_salida(A, valor)
+    M --> F : {ok, ficha_id, "¡Éxito! Sacó la ficha...", posiciones}
+    F --> PS : resultado
+  else CU06 Mover Ficha
+    JA -> VA : elige chip de ficha y clic «Mover ficha»
+    VA -> CT : mover_ficha(ficha_id)
+    CT -> RA : solicitar("mover_ficha", [ficha_id])
+    RA -> RS : _srv_accion.rpc_id(1, "mover_ficha")
+    RS -> PS : mover_ficha(A, ficha_id)
+    PS -> F : mover_ficha(A, ficha_id, valor)
+    F -> M : actualizar_posicion(A, ficha_id, valor)
+    opt CU07 Capturar Ficha [cae sobre un rival]
+      M -> M : enviar_ficha_a_base(A, casilla)
+    end
+    M --> F : {ok, ficha_id, "Ficha movida N casillas", posiciones}
+    F --> PS : resultado
+  end
+  PS -> PS : _notificar("ficha_movida", [A, ficha_id, posiciones])
+  PS --> RS : evento_emitido
+  RS --> PA : _cli_evento("ficha_movida") [CU09]
+  RS --> PB : _cli_evento("ficha_movida")
+  PA --> VTA : <<signal>> ficha_movida(...)
+  VTA -> VTA : tablero.mostrar_posiciones(posiciones)
+  PB --> VTB : <<signal>> ficha_movida(...)
+  VTB -> VTB : tablero.mostrar_posiciones(posiciones)
+end
+
+== Fin del turno ==
+PS -> PS : _finalizar_accion(A)
+PS -> F : validar_fin_turno(A, valor, tiros_seguidos)
+F -> M : repite_turno(A, valor, tiros_seguidos)
+M --> F : repite
+F --> PS : termina = not repite
+alt CU13 Repetir Tiro [salió 6 y menos de 3 tiros]
+  PS -> T : repetir()
+  PS -> PS : _notificar("turno_cambiado", [A])
+else el turno termina
+  PS -> T : siguiente()
+  T --> PS : B
+  PS -> PS : _notificar("turno_cambiado", [B])
+end
+PS --> RS : evento_emitido
+RS --> PA : _cli_evento("turno_cambiado") [CU09]
+RS --> PB : _cli_evento("turno_cambiado")
+PA --> VTA : <<signal>> turno_cambiado(B)
+VTA -> VA : mostrar_turno(es_mio = false)
+PB --> VTB : <<signal>> turno_cambiado(B)
+VTB -> VTB : mostrar_turno(es_mio = true)\n«Lanzar dado» habilitado para B
+@enduml

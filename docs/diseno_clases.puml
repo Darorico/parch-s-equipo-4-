@@ -1,0 +1,220 @@
+@startuml diseno_clases
+' Modelo de DISEÑO del caso de uso «Ejercer turno del juego» (CU12).
+' Corresponde 1:1 con el código del repositorio (Godot 4.5 / GDScript).
+' Patrones: MVC + Observer (señales de Godot) + Fachada con objeto Mock.
+skinparam classAttributeIconSize 0
+skinparam packageStyle folder
+hide empty members
+
+package "views (Vista / objetos de presentación)" <<Folder>> {
+  class VistaRegistro <<boundary>> {
+    - _nombre : LineEdit
+    - _servidor : LineEdit
+    - _grupo_color : ButtonGroup
+    - _grupo_avatar : ButtonGroup
+    - _boton_unirse : Button
+    - _boton_hospedar : Button
+    + configurar(partida, lobby, datos)
+    - _on_unirse()
+    - _on_error(texto)
+  }
+  class VistaSalaEspera <<boundary>> {
+    - _lista : VBoxContainer
+    - _boton_listo : Button
+    + configurar(partida, lobby, mi_id)
+    - _on_jugadores_actualizados(jugadores)
+    - _on_listo()
+  }
+  class VistaTablero <<boundary>> {
+    + tablero : TableroDibujo
+    + panel_jugadores : PanelJugadores
+    + panel_acciones : PanelAcciones
+    + bitacora : Bitacora
+    + configurar(partida, controlador, mi_id, jugadores)
+    - _on_turno_cambiado(jugador_id)
+    - _on_dado_lanzado(jugador_id, valor)
+    - _on_opciones_turno(jugador_id, movibles, puede_liberar)
+    - _on_ficha_movida(jugador_id, ficha_id, posiciones)
+    - _on_mensaje(texto)
+  }
+  class TableroDibujo <<boundary>> {
+    + mostrar_jugadores(jugadores)
+    + mostrar_posiciones(posiciones)
+    + resaltar(jugador_id, movibles, seleccionada)
+    -- signal --
+    ficha_clicada(ficha_id)
+  }
+  class PanelJugadores <<boundary>> {
+    + mostrar(jugadores, mi_id)
+    + marcar_turno(jugador_id)
+  }
+  class PanelAcciones <<boundary>> {
+    + dado : DadoVista
+    + boton_lanzar : Button
+    + boton_liberar : Button
+    + boton_mover : Button
+    + mostrar_turno(es_mio, nombre)
+    + mostrar_dado(valor, nombre, es_mio)
+    + mostrar_opciones(movibles, puede_liberar)
+    + limpiar_opciones()
+  }
+  class DadoVista <<boundary>> {
+    + valor : int
+    + animar(valor_final)
+  }
+  class Bitacora <<boundary>> {
+    + agregar(texto)
+  }
+}
+
+package "controllers (Controlador)" <<Folder>> {
+  class ControladorTurno <<control>> {
+    + procesar_lanzamiento_dado()
+    + liberar_ficha()
+    + mover_ficha(ficha_id)
+  }
+  class ControladorLobby <<control>> {
+    + unirse_a_partida(url, nombre, color, avatar)
+    + hospedar_partida(nombre, color, avatar)
+    + registrar_jugador(nombre, color, avatar)
+    + confirmar_estado(listo)
+  }
+  class Red <<control>> <<autoload>> {
+    + PUERTO : int = 9080
+    + es_servidor : bool
+    + hospedar(puerto) : Error
+    + unirse(url) : Error
+    + solicitar(accion, args)
+    - _srv_accion(accion, args) <<rpc any_peer>>
+    - _cli_evento(nombre, args) <<rpc authority>>
+    - _ejecutar(jugador_id, accion, args)
+    - _difundir(nombre, args)
+  }
+}
+
+package "models (Modelo)" <<Folder>> {
+  class Partida <<entity>> <<sujeto observado>> {
+    + estado : Estado
+    + jugadores : Dictionary
+    + turno_actual : int
+    + registrar_jugador(id, nombre, color, avatar) : String
+    + confirmar_estado(id, listo) : String
+    + verificar_estado_partida()
+    + iniciar_partida()
+    + lanzar_dado(jugador_id) : String
+    + liberar_ficha(jugador_id) : String
+    + mover_ficha(jugador_id, ficha_id) : String
+    + quitar_jugador(jugador_id)
+    + aplicar_evento(nombre, args)
+    - _finalizar_accion(jugador_id)
+    - _notificar(nombre, args)
+    -- signals --
+    jugador_registrado(jugador_id)
+    jugadores_actualizados(jugadores)
+    partida_iniciada(jugadores, orden)
+    turno_cambiado(jugador_id)
+    dado_lanzado(jugador_id, valor)
+    opciones_turno(jugador_id, movibles, puede_liberar)
+    ficha_movida(jugador_id, ficha_id, posiciones)
+    mensaje(texto)
+    partida_terminada(ganador_id, motivo)
+    error_recibido(texto)
+    evento_emitido(nombre, args)
+  }
+  enum Estado {
+    ESPERA
+    EN_CURSO
+    TERMINADA
+  }
+  class Turno <<entity>> {
+    + orden : Array[int]
+    + indice : int
+    + tiros_seguidos : int
+    + fase : Fase
+    + iniciar(orden, primero)
+    + jugador_actual() : int
+    + siguiente() : int
+    + repetir()
+    + quitar(jugador_id) : bool
+  }
+  class Dado <<entity>> {
+    + valor_actual : int
+    + generar_valor(fachada) : int
+  }
+  class Jugador <<entity>> {
+    + id : int
+    + nombre : String
+    + color : String
+    + avatar : int
+    + listo : bool
+    + fichas_en_meta : int
+    + to_dict() : Dictionary
+  }
+  class Ficha <<entity>> {
+    + id : int
+    + color : String
+    + casilla : int
+    + estado : Estado
+  }
+
+  package "reglas (subsistema de reglas de negocio)" <<Folder>> {
+    class FachadaReglas <<facade>> {
+      + iniciar_partida(colores)
+      + generar_valor() : int
+      + opciones(jugador_id, valor) : Dictionary
+      + liberar_ficha(jugador_id, valor) : Dictionary
+      + mover_ficha(jugador_id, ficha_id, valor) : Dictionary
+      + validar_fin_turno(jugador_id, valor, tiros) : bool
+      + retirar_jugador(jugador_id)
+    }
+    class ReglasMock <<mock>> {
+      + SALIDAS : Dictionary
+      + REPETIR_CON_SEIS : bool = true
+      + preparar_tablero(colores)
+      + generar_valor() : int
+      + puede_liberar(jugador_id, valor) : bool
+      + fichas_movibles(jugador_id, valor) : Array
+      + posicionar_en_salida(jugador_id, valor) : Dictionary
+      + actualizar_posicion(jugador_id, ficha_id, valor) : Dictionary
+      + enviar_ficha_a_base(jugador_id, casilla) : String
+      + establecer_barrera(jugador_id, casilla) : bool
+      + repite_turno(jugador_id, valor, tiros) : bool
+    }
+    note bottom of ReglasMock
+      Simula Tablero, Casilla y Ficha
+      mientras no exista el motor real.
+    end note
+  }
+}
+
+' --- Relaciones ---
+VistaTablero *-- TableroDibujo
+VistaTablero *-- PanelJugadores
+VistaTablero *-- PanelAcciones
+VistaTablero *-- Bitacora
+PanelAcciones *-- DadoVista
+
+' Observer: las vistas se suscriben a las señales del Modelo (nunca lo consultan)
+VistaTablero ..> Partida : <<observa>>\n(señales)
+VistaSalaEspera ..> Partida : <<observa>>
+VistaRegistro ..> Partida : <<observa>>\nerror_recibido
+
+' Vista → Controlador (acciones del usuario)
+PanelAcciones --> ControladorTurno : acciones del usuario
+VistaRegistro --> ControladorLobby
+VistaSalaEspera --> ControladorLobby
+
+' Controlador → Modelo (a través de la red)
+ControladorTurno ..> Red : solicitar()
+ControladorLobby ..> Red : solicitar()
+Red --> Partida : invoca (servidor)\naplicar_evento (cliente)
+Red ..> Partida : <<observa>>\nevento_emitido
+
+Partida "1" *-- "1" Turno
+Partida "1" *-- "1" Dado
+Partida "1" o-- "2..4" Jugador
+Jugador "1" *-- "4" Ficha
+Partida +-- Estado
+Partida --> "1" FachadaReglas : usa
+FachadaReglas --> ReglasMock : delega
+@enduml
