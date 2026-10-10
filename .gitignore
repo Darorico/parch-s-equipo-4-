@@ -1,7 +1,41 @@
-# Godot 4+ specific ignores
+# --- Godot 4 ---
+# Caché del editor e importaciones (Godot las regenera al abrir el proyecto)
 .godot/
+# Plantillas de compilación de Android y otras plataformas
 /android/
+# Mono / C# (por si algún día se usa)
+.mono/
+data_*/
+mono_crash.*.json
+*.translation
 
-# Exportaciones
+# --- Exportaciones ---
+# La versión Web se genera con scripts/exportar_web.ps1
 export/
+*.pck
+*.zip
+*.tpz
+
+# --- Archivos temporales y registros ---
 *.tmp
+*.log
+*.bak
+*~
+__pycache__/
+*.pyc
+
+# --- Respaldos automáticos de StarUML ---
+*.mdj.bak
+__backup.mdj
+
+# --- Sistema operativo ---
+Thumbs.db
+ehthumbs.db
+desktop.ini
+.DS_Store
+
+# --- Editores ---
+.vscode/
+.idea/
+*.code-workspace
+
