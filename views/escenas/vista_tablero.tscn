@@ -15,28 +15,6 @@
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_8nco3"]
 shader = ExtResource("2_k34fd")
 
-[sub_resource type="StyleBox" id="StyleBox_vqib8"]
-resource_local_to_scene = false
-resource_name = ""
-content_margin_left = 10.0
-content_margin_top = 3.0
-content_margin_right = 10.0
-content_margin_bottom = 3.0
-script = ExtResource("5_8tpvt")
-relleno = Color(0.16862746, 0.14901961, 0.13333334, 1)
-borde = Color(1, 1, 1, 0)
-
-[sub_resource type="StyleBox" id="StyleBox_7vv2a"]
-resource_local_to_scene = false
-resource_name = ""
-content_margin_left = 8.0
-content_margin_top = 2.0
-content_margin_right = 8.0
-content_margin_bottom = 2.0
-script = ExtResource("5_8tpvt")
-relleno = Color(1, 0.88235295, 0.3019608, 0.8)
-borde = Color(1, 1, 1, 0)
-
 [node name="VistaTablero" type="Control"]
 layout_mode = 3
 anchors_preset = 0
@@ -71,66 +49,6 @@ theme_override_constants/margin_bottom = 16
 [node name="Columna" type="VBoxContainer" parent="Contenido"]
 layout_mode = 2
 theme_override_constants/separation = 10
-
-[node name="Encabezado" type="HBoxContainer" parent="Contenido/Columna"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="Columna" type="VBoxContainer" parent="Contenido/Columna/Encabezado"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 0
-
-[node name="Fila" type="HBoxContainer" parent="Contenido/Columna/Encabezado/Columna"]
-layout_mode = 2
-theme_override_constants/separation = 8
-
-[node name="PildoraNumero" type="PanelContainer" parent="Contenido/Columna/Encabezado/Columna/Fila"]
-layout_mode = 2
-size_flags_vertical = 4
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_vqib8")
-
-[node name="Numero" type="Label" parent="Contenido/Columna/Encabezado/Columna/Fila/PildoraNumero"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("6_lua3w")
-theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(0.9843137, 0.98039216, 0.9647059, 1)
-text = "03"
-
-[node name="Seccion" type="Label" parent="Contenido/Columna/Encabezado/Columna/Fila"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("6_lua3w")
-theme_override_font_sizes/font_size = 16
-theme_override_colors/font_color = Color(0.18431373, 0.43529412, 0.8392157, 1)
-text = "TABLERO Y TURNO"
-
-[node name="Titulo" type="Label" parent="Contenido/Columna/Encabezado/Columna"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("6_lua3w")
-theme_override_font_sizes/font_size = 36
-theme_override_colors/font_color = Color(0.78431374, 0.19215687, 0.16470589, 1)
-text = "Tablero central y turno activo"
-
-[node name="Subtitulo" type="Label" parent="Contenido/Columna/Encabezado/Columna"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 17
-theme_override_colors/font_color = Color(0.30980393, 0.3529412, 0.43137255, 1)
-text = "Cada jugador ve su avatar, su color, sus fichas en meta y de quién es el turno."
-
-[node name="Logo" type="PanelContainer" parent="Contenido/Columna/Encabezado"]
-layout_mode = 2
-size_flags_horizontal = 0
-size_flags_vertical = 0
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBox_7vv2a")
-
-[node name="TextoParchisClub" type="Label" parent="Contenido/Columna/Encabezado/Logo"]
-layout_mode = 2
-theme_override_fonts/font = ExtResource("6_lua3w")
-theme_override_font_sizes/font_size = 18
-theme_override_colors/font_color = Color(0.13333334, 0.1882353, 0.2901961, 1)
-text = "PARCHÍS CLUB"
 
 [node name="Cuerpo" type="HBoxContainer" parent="Contenido/Columna"]
 layout_mode = 2

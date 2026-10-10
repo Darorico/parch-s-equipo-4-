@@ -93,11 +93,15 @@ static func tarjeta(titulo: String, contenido: Control) -> PanelContainer:
 	return panel
 
 
+## Si la pantalla no tiene encabezado (o le falta alguna parte), simplemente no hace nada.
 static func cambiar_encabezado(encabezado_actual: Control, numero: String, seccion: String, titulo: String, subtitulo: String) -> void:
-	encabezado_actual.find_child("Numero", true, false).text = numero.to_upper()
-	encabezado_actual.find_child("Seccion", true, false).text = seccion
-	encabezado_actual.find_child("Titulo", true, false).text = titulo
-	encabezado_actual.find_child("Subtitulo", true, false).text = subtitulo
+	if encabezado_actual == null:
+		return
+	for parte in [["Numero", numero.to_upper()], ["Seccion", seccion], ["Titulo", titulo], ["Subtitulo", subtitulo]]:
+		var label := encabezado_actual.find_child(parte[0], true, false) as Label
+		if label:
+			label.text = parte[1]
+
 
 
 static func vaciar(contenedor: Node) -> void:

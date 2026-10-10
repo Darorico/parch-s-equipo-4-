@@ -14,7 +14,8 @@ signal volver_al_inicio
 @onready var tablero: TableroDibujo = %Tablero
 @onready var panel_jugadores: PanelJugadores = %PanelJugadores
 @onready var panel_acciones: PanelAcciones = %PanelAcciones
-@onready var _encabezado: Control = %Encabezado
+## Opcional: la pantalla del tablero va sin títulos para dejarle más espacio al tablero.
+@onready var _encabezado: Control = get_node_or_null("%Encabezado")
 
 var _mi_id := 0
 var _nombres := {}  # jugador_id -> nombre (de lo recibido en las señales)
