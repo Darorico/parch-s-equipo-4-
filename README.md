@@ -51,6 +51,7 @@ scripts/                      servidor.ps1, web.ps1, exportar_web.ps1
 
 ## Documentos (`docs/`)
 
+- [`Parchis_Equipo4_4+1.mdj`](docs/Parchis_Equipo4_4+1.mdj): **archivo de StarUML** organizado en las 4+1 vistas. Contiene: casos de uso; clases de análisis y de diseño (vista lógica); secuencias de análisis y de diseño de «Ejercer turno» (vista de procesos); paquetes (vista de desarrollo); y despliegue (vista física).
 - [`Guia_Editor_Visual.md`](Guia_Editor_Visual.md): **cómo ver y modificar las pantallas y el tablero en el editor de Godot**.
 - [`Arquitectura_Juego.md`](Arquitectura_Juego.md): **mapa de toda la programación**, con cada script, cómo interactúan, estilo visual, sonido y animación.
 - [`casos_de_uso.drawio`](docs/casos_de_uso.drawio): diagrama de casos de uso corregido (se abre en draw.io o app.diagrams.net). Respaldo en [`casos_de_uso.puml`](docs/casos_de_uso.puml).
