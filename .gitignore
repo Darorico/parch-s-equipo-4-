@@ -1,0 +1,11 @@
+# Compilados de Maven
+target/
+
+# NetBeans
+nbproject/private/
+nbactions*.xml
+nb-configuration.xml
+
+# Contraseñas de MySQL (Hito 2B): NUNCA subirlas
+**/config.properties
+*.local.properties
