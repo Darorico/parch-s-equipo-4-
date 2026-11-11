@@ -16,6 +16,7 @@
         <module>InterfacesSala</module>
         <module>SalaMock</module>
         <module>FabricarSala</module>
+        <module>PresentacionSala</module>
     </modules>
 
     <properties>
