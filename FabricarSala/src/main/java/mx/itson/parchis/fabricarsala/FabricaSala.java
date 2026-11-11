@@ -1,0 +1,26 @@
+package mx.itson.parchis.fabricarsala;
+
+import mx.itson.parchis.interfaces.IFachadaSala;
+import mx.itson.parchis.sala.mock.FachadaSalaMock;
+
+/**
+ * creacion de sala 
+ * @author pc
+ */
+public final class FabricaSala {
+
+    private FabricaSala() {
+        // Evita crear instancias de esta clase
+    }
+
+    public static IFachadaSala crearFachada() {
+        String modo = System.getProperty("parchis.sala", "mock");
+
+        return switch (modo.toLowerCase()) {
+            case "mock" -> new FachadaSalaMock();
+            default -> throw new IllegalArgumentException(
+                    "Modo de sala no soportado: " + modo
+            );
+        };
+    }
+}
