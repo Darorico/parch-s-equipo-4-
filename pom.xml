@@ -15,6 +15,7 @@
         <module>DTOs</module>
         <module>InterfacesSala</module>
         <module>SalaMock</module>
+        <module>FabricarSala</module>
     </modules>
 
     <properties>
