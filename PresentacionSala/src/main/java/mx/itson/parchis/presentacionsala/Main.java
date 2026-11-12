@@ -1,16 +1,15 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- */
+package mx.itson.parchis.presentacion;
 
-package mx.itson.parchis.presentacionsala;
+import javax.swing.SwingUtilities;
+import mx.itson.parchis.presentacion.control.ControlSala;
+import mx.itson.parchis.presentacion.pantallas.PantallaRegistro;
 
-/**
- *
- * @author pc
- */
+
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        // Una sola instancia de ControlSala para toda la aplicación
+        ControlSala control = new ControlSala();
+        SwingUtilities.invokeLater(() -> new PantallaRegistro(control).setVisible(true));
     }
 }
