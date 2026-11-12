@@ -15,11 +15,23 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.myswl</groupId>
+            <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <version>8.4.0</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
     </dependencies>
+    <build>
+        <!-- Las pruebas leen la conexión de Config/config.properties (no se sube a GitHub). -->
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/../Config</directory>
+            </testResource>
+        </testResources>
+    </build>
     <properties>
         <exec.mainClass>mx.itson.parchis.perfil.Perfil</exec.mainClass>
     </properties>
