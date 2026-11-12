@@ -19,6 +19,10 @@
             <artifactId>SalaMock</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
     </dependencies>
     <properties>
         <exec.mainClass>mx.itson.parchis.fabricarsala.FabricarSala</exec.mainClass>

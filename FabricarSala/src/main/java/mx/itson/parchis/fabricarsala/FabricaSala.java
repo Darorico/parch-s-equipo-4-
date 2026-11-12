@@ -9,12 +9,14 @@ import mx.itson.parchis.sala.mock.FachadaSalaMock;
  */
 public final class FabricaSala {
 
+    public static final String PROPIEDAD_MODO = "parchis.sala";
+    
     private FabricaSala() {
         // Evita crear instancias de esta clase
     }
 
     public static IFachadaSala crearFachada() {
-        String modo = System.getProperty("parchis.sala", "mock");
+        String modo = System.getProperty(PROPIEDAD_MODO, "mock");
 
         return switch (modo.toLowerCase()) {
             case "mock" -> new FachadaSalaMock();
