@@ -17,6 +17,7 @@
         <module>SalaMock</module>
         <module>FabricarSala</module>
         <module>PresentacionSala</module>
+        <module>ComunicacionP2P</module>
     </modules>
 
     <properties>
