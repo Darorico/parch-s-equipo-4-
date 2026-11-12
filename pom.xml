@@ -18,6 +18,7 @@
         <module>FabricarSala</module>
         <module>PresentacionSala</module>
         <module>ComunicacionP2P</module>
+        <module>Perfil</module>
     </modules>
 
     <properties>
