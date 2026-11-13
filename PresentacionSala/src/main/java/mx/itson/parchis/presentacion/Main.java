@@ -1,4 +1,4 @@
-package mx.itson.parchis.presentacion.Main;
+package mx.itson.parchis.presentacion;
 
 import javax.swing.SwingUtilities;
 import mx.itson.parchis.presentacion.control.ControlSala;
