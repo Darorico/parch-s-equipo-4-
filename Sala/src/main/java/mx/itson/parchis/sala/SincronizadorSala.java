@@ -3,7 +3,6 @@ package mx.itson.parchis.sala;
 import java.io.IOException;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,14 +29,22 @@ final class SincronizadorSala implements IReceptorMensajes {
     private static final Logger LOG = Logger.getLogger(SincronizadorSala.class.getName());
 
     private final FachadaSala fachada;
-    /** Identifica a este peer en los registros que salen de aquí. */
-    private final String id = UUID.randomUUID().toString().substring(0, 8);
+    /** Identifica a este peer en la red. */
+    private final String id;
     /** Todos los registros que este peer ya conoce (propios y recibidos). */
     private final Set<RegistroRed> conocidos = ConcurrentHashMap.newKeySet();
     private Peer peer;
 
-    SincronizadorSala(FachadaSala fachada) {
+    SincronizadorSala(FachadaSala fachada, String id) {
         this.fachada = fachada;
+        this.id = id;
+    }
+
+    /** Registra como conocidos los jugadores que ya estaban en la sala antes de conectarse. */
+    void conocer(List<Jugador> jugadores) {
+        for (Jugador j : jugadores) {
+            conocidos.add(RegistroRed.de(j));
+        }
     }
 
     /**
@@ -74,7 +81,7 @@ final class SincronizadorSala implements IReceptorMensajes {
 
     /** Difunde a los demás peers un jugador que se acaba de registrar aquí. */
     void difundirLocal(Jugador jugador) {
-        RegistroRed registro = RegistroRed.de(jugador, id);
+        RegistroRed registro = RegistroRed.de(jugador);
         conocidos.add(registro);
         peer.difundir(registro.aTexto());
     }

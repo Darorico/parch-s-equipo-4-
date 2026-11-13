@@ -101,6 +101,31 @@ class SincronizacionP2PTest {
     }
 
     @Test
+    void siDosPeersRegistranLoMismoAmbosSeQuedanConElMasAntiguo() throws Exception {
+        // La PC 1 registra a Ana primero.
+        FachadaSala pc1 = peer();
+        pc1.registrarJugador(new JugadorDTO("Ana", ColorFicha.ROJO, 1));
+        Thread.sleep(5);
+
+        // La PC 2, que aún no se entera, registra el mismo nombre, el mismo color y otro jugador.
+        FachadaSala pc2 = new FachadaSala(new PerfilBO(new PerfilDAOEnMemoria()));
+        pc2.registrarJugador(new JugadorDTO("ana", ColorFicha.AZUL, 2));
+        pc2.registrarJugador(new JugadorDTO("Beto", ColorFicha.ROJO, 3));
+        pc2.registrarJugador(new JugadorDTO("Carla", ColorFicha.VERDE, 4));
+
+        // Al conectarse se comparten los registros y las dos aplican la misma regla.
+        pc2.conectarRed(0, List.of("127.0.0.1:" + pc1.getPuertoRed()));
+        peers.add(pc2);
+
+        List<JugadorDTO> esperado = List.of(
+                new JugadorDTO("Ana", ColorFicha.ROJO, 1),
+                new JugadorDTO("Carla", ColorFicha.VERDE, 4));
+        esperar(() -> pc1.obtenerJugadores().equals(esperado) && pc2.obtenerJugadores().equals(esperado),
+                "las PCs no llegaron a la misma sala: PC 1 = " + pc1.obtenerJugadores()
+                + ", PC 2 = " + pc2.obtenerJugadores());
+    }
+
+    @Test
     void elMensajeRespetaNombresConCaracteresEspeciales() {
         RegistroRed original = new RegistroRed("Ñoño; José|1", ColorFicha.VERDE, 3, 1_700_000_000_123L, "abc12345");
 

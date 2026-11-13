@@ -17,16 +17,27 @@ final class Jugador {
     private final ColorFicha color;
     private final int avatar;
     private final Instant fechaRegistro;
+    /** Peer donde se hizo el registro; desempata si dos registros tienen la misma hora y nombre. */
+    private final String origen;
 
     Jugador(String nombre, ColorFicha color, int avatar) {
         this(nombre, color, avatar, Instant.now());
     }
 
     Jugador(String nombre, ColorFicha color, int avatar, Instant fechaRegistro) {
+        this(nombre, color, avatar, fechaRegistro, "local");
+    }
+
+    Jugador(String nombre, ColorFicha color, int avatar, Instant fechaRegistro, String origen) {
         this.nombre = nombre;
         this.color = color;
         this.avatar = avatar;
         this.fechaRegistro = fechaRegistro;
+        this.origen = origen;
+    }
+
+    String getOrigen() {
+        return origen;
     }
 
     String getNombre() {

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.UUID;
 import mx.itson.parchis.bos.PerfilBO;
 import mx.itson.parchis.dtos.JugadorDTO;
 import mx.itson.parchis.interfaces.IFachadaSala;
@@ -27,6 +28,8 @@ public class FachadaSala implements IFachadaSala {
 
     private final Sala sala = new Sala();
     private final PerfilBO perfilBO;
+    /** Identifica a esta computadora en los registros que salen de aquí. */
+    private final String idPeer = UUID.randomUUID().toString().substring(0, 8);
     /** Conexión con los demás peers; null mientras la sala funciona sin red. */
     private SincronizadorSala red;
 
@@ -67,8 +70,9 @@ public class FachadaSala implements IFachadaSala {
 
         // La hora va en milisegundos porque así viaja por la red: todos los peers ven la misma.
         Jugador nuevo = new Jugador(nombre, jugador.getColor(), jugador.getAvatar(),
-                Instant.now().truncatedTo(ChronoUnit.MILLIS));
+                Instant.now().truncatedTo(ChronoUnit.MILLIS), idPeer);
         guardarPerfil(nuevo.aDTO());
+        // Siempre entra: ya se revisó que su nombre y color estén libres y que haya lugar.
         sala.agregarJugador(nuevo);
         if (red != null) {
             red.difundirLocal(nuevo);
@@ -89,25 +93,24 @@ public class FachadaSala implements IFachadaSala {
         if (red != null) {
             throw new IllegalStateException("La sala ya está conectada a la red.");
         }
-        SincronizadorSala nueva = new SincronizadorSala(this);
+        SincronizadorSala nueva = new SincronizadorSala(this, idPeer);
+        // Los registros hechos antes de conectarse también se comparten con los demás peers.
+        nueva.conocer(sala.getSolicitudes());
         nueva.iniciar(puerto, peers);
         red = nueva;
     }
 
     /**
-     * Aplica el registro de un jugador que se registró en otro peer.
+     * Aplica el registro de un jugador que se registró en otro peer, con la regla
+     * "gana el registro más antiguo" (ver Sala). Si choca con un jugador de esta sala,
+     * se queda el que se registró primero, aunque el que sale sea de esta computadora.
      * Su perfil no se guarda aquí: cada computadora guarda el perfil de su propio jugador.
      *
      * @return true si el jugador entró a la sala
      */
     synchronized boolean aplicarRegistroRemoto(RegistroRed registro) {
-        if (sala.estaLlena() || !sala.nombreDisponible(registro.nombre())
-                || !sala.colorDisponible(registro.color())) {
-            return false;
-        }
-        sala.agregarJugador(new Jugador(registro.nombre(), registro.color(), registro.avatar(),
-                Instant.ofEpochMilli(registro.milisegundos())));
-        return true;
+        return sala.agregarJugador(new Jugador(registro.nombre(), registro.color(), registro.avatar(),
+                Instant.ofEpochMilli(registro.milisegundos()), registro.origen()));
     }
 
     /** Puerto donde escucha este peer (para las pruebas). */
@@ -149,9 +152,17 @@ public class FachadaSala implements IFachadaSala {
      */
     private void guardarPerfil(JugadorDTO perfil) {
         if (perfilBO.obtenerPorNombre(perfil.getNombre()) == null) {
-            perfilBO.registrar(perfil);
-        } else {
-            perfilBO.actualizar(perfil);
+            try {
+                perfilBO.registrar(perfil);
+                return;
+            } catch (RuntimeException e) {
+                // Otro peer que usa la misma base de datos insertó ese perfil justo entre la
+                // consulta y el insert: ya existe, así que se actualiza. Si no existe, el error es otro.
+                if (perfilBO.obtenerPorNombre(perfil.getNombre()) == null) {
+                    throw e;
+                }
+            }
         }
+        perfilBO.actualizar(perfil);
     }
 }

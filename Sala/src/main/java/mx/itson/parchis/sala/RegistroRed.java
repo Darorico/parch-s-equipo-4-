@@ -21,10 +21,10 @@ record RegistroRed(String nombre, ColorFicha color, int avatar, long milisegundo
     private static final String TIPO = "REGISTRO";
     private static final String SEPARADOR = ";";
 
-    /** Registro de un jugador que se acaba de registrar en este peer. */
-    static RegistroRed de(Jugador jugador, String origen) {
+    /** Registro que corresponde a un jugador de la sala. */
+    static RegistroRed de(Jugador jugador) {
         return new RegistroRed(jugador.getNombre(), jugador.getColor(), jugador.getAvatar(),
-                jugador.getFechaRegistro().toEpochMilli(), origen);
+                jugador.getFechaRegistro().toEpochMilli(), jugador.getOrigen());
     }
 
     /** Convierte el registro a la línea que se manda por la red. */
