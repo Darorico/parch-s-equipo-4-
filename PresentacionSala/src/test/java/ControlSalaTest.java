@@ -9,16 +9,21 @@ import mx.itson.parchis.dtos.ColorFicha;
 import mx.itson.parchis.dtos.JugadorDTO;
 import mx.itson.parchis.interfaces.SalaException;
 import mx.itson.parchis.interfaces.SalaException.Motivo;
+import mx.itson.parchis.sala.mock.FachadaSalaMock;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Pruebas del controlador. Usan el mock en memoria para no depender de MySQL:
+ * la fachada real ya se prueba en FachadaSalaTest.
+ */
 class ControlSalaTest {
 
     private ControlSala control;
 
     @BeforeEach
     void preparar() {
-        control = new ControlSala();
+        control = new ControlSala(new FachadaSalaMock());
     }
 
     @Test
