@@ -23,5 +23,14 @@
             <groupId>mx.itson.parchis</groupId>
             <artifactId>Perfil</artifactId>
         </dependency>
+        <!-- Estilo P2P: el registro de cada jugador se difunde a los demás peers. -->
+        <dependency>
+            <groupId>mx.itson.parchis</groupId>
+            <artifactId>ComunicacionP2P</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+        </dependency>
     </dependencies>
 </project>

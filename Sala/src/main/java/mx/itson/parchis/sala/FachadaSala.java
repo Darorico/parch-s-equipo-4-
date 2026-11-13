@@ -1,5 +1,8 @@
 package mx.itson.parchis.sala;
 
+import java.io.IOException;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import mx.itson.parchis.bos.PerfilBO;
 import mx.itson.parchis.dtos.JugadorDTO;
@@ -24,6 +27,8 @@ public class FachadaSala implements IFachadaSala {
 
     private final Sala sala = new Sala();
     private final PerfilBO perfilBO;
+    /** Conexión con los demás peers; null mientras la sala funciona sin red. */
+    private SincronizadorSala red;
 
     /** Usa el PerfilBO con PerfilDAOMySQL (lee Config/config.properties). */
     public FachadaSala() {
@@ -60,10 +65,62 @@ public class FachadaSala implements IFachadaSala {
                     "El color " + jugador.getColor() + " ya está ocupado. Elige otro.");
         }
 
-        Jugador nuevo = new Jugador(nombre, jugador.getColor(), jugador.getAvatar());
+        // La hora va en milisegundos porque así viaja por la red: todos los peers ven la misma.
+        Jugador nuevo = new Jugador(nombre, jugador.getColor(), jugador.getAvatar(),
+                Instant.now().truncatedTo(ChronoUnit.MILLIS));
         guardarPerfil(nuevo.aDTO());
         sala.agregarJugador(nuevo);
+        if (red != null) {
+            red.difundirLocal(nuevo);
+        }
         return nuevo.aDTO();
+    }
+
+    /**
+     * Conecta esta sala con los demás peers (estilo P2P). Desde aquí, cada registro
+     * se difunde a los otros peers y los registros de ellos llegan a esta sala.
+     * Sin llamar a este método, la sala funciona sola, sin red.
+     *
+     * @param puerto puerto donde escucha este peer
+     * @param peers otros peers, con el formato ip:puerto
+     * @throws IOException si no se pudo abrir el puerto
+     */
+    public synchronized void conectarRed(int puerto, List<String> peers) throws IOException {
+        if (red != null) {
+            throw new IllegalStateException("La sala ya está conectada a la red.");
+        }
+        SincronizadorSala nueva = new SincronizadorSala(this);
+        nueva.iniciar(puerto, peers);
+        red = nueva;
+    }
+
+    /**
+     * Aplica el registro de un jugador que se registró en otro peer.
+     * Su perfil no se guarda aquí: cada computadora guarda el perfil de su propio jugador.
+     *
+     * @return true si el jugador entró a la sala
+     */
+    synchronized boolean aplicarRegistroRemoto(RegistroRed registro) {
+        if (sala.estaLlena() || !sala.nombreDisponible(registro.nombre())
+                || !sala.colorDisponible(registro.color())) {
+            return false;
+        }
+        sala.agregarJugador(new Jugador(registro.nombre(), registro.color(), registro.avatar(),
+                Instant.ofEpochMilli(registro.milisegundos())));
+        return true;
+    }
+
+    /** Puerto donde escucha este peer (para las pruebas). */
+    synchronized int getPuertoRed() {
+        return red.getPuerto();
+    }
+
+    /** Cierra las conexiones con los demás peers (para las pruebas). */
+    synchronized void desconectarRed() {
+        if (red != null) {
+            red.detener();
+            red = null;
+        }
     }
 
     @Override

@@ -54,6 +54,14 @@ public class Peer {
         return conexiones.size();
     }
 
+    /**
+     * Puerto en el que escucha este peer. Si se creó con el puerto 0, aquí sale
+     * el puerto libre que eligió el sistema operativo (útil en las pruebas).
+     */
+    public int getPuerto() {
+        return servidor != null ? servidor.getLocalPort() : puerto;
+    }
+
     /** Cierra todas las conexiones. */
     public void detener() {
         for (Conexion c : conexiones) {
