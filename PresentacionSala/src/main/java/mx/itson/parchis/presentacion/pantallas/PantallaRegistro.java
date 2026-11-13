@@ -1,10 +1,13 @@
 package mx.itson.parchis.presentacion.pantallas;
 
 import java.awt.Color;
+import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.DefaultListModel;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingConstants;
+import javax.swing.Timer;
 import mx.itson.parchis.dtos.ColorFicha;
 import mx.itson.parchis.dtos.JugadorDTO;
 import mx.itson.parchis.interfaces.IFachadaSala;
@@ -17,14 +20,22 @@ public class PantallaRegistro extends javax.swing.JFrame {
 
         private static final int NUM_AVATARES = 6;
 
+        /** Cada cuánto se revisa si llegaron jugadores de otras computadoras (P2P). */
+        private static final int REVISION_MS = 500;
+
         private final ControlSala control;
         private final DefaultListModel<String> modeloJugadores = new DefaultListModel<>();
+        /** Jugadores que se ven ahora en la lista. */
+        private List<JugadorDTO> mostrados = List.of();
+        /** Revisa la sala en el hilo de Swing, así la pantalla se actualiza sola. */
+        private final Timer revision = new Timer(REVISION_MS, e -> revisarSala());
 
         public PantallaRegistro(ControlSala control) {
                 this.control = control;
                 initComponents();
                 configurarComponentes();
                 refrescarJugadores();
+                revision.start();
             }
 
         /** Ajustes que no se hacen en el disenador */
@@ -74,21 +85,44 @@ public class PantallaRegistro extends javax.swing.JFrame {
 
         /** Muestra el mensaje completo: con HTML el texto largo baja de renglon en vez de cortarse. */
         private void mostrarError(String mensaje) {
-            String seguro = mensaje.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;");
+            String seguro = mensaje.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+                    .replace("\n", "<br>");
             lblError.setText("<html>" + seguro + "</html>");
         }
 
+        /**
+         * Lo hace el Timer cada medio segundo: si llegó o salió alguien desde otra computadora,
+         * refresca la lista; si un jugador de esta computadora perdió su lugar contra un registro
+         * más antiguo, lo avisa con el mensaje de A2 (nombre) o A3 (color).
+         */
+        private void revisarSala() {
+            if (!control.obtenerJugadores().equals(mostrados)) {
+                refrescarJugadores();
+            }
+            List<SalaException> avisos = control.registrosPerdidos();
+            if (!avisos.isEmpty()) {
+                mostrarError(avisos.stream().map(SalaException::getMessage).collect(Collectors.joining("\n")));
+            }
+        }
+
         private void refrescarJugadores() {
+            mostrados = control.obtenerJugadores();
             modeloJugadores.clear();
-            for (JugadorDTO j : control.obtenerJugadores()) {
+            for (JugadorDTO j : mostrados) {
                 modeloJugadores.addElement(j.getNombre() + "  -  " + j.getColor() + "  -  avatar " + j.getAvatar());
             }
             lblContador.setText("Jugadores registrados: " + modeloJugadores.size()
                     + " / " + IFachadaSala.MAX_JUGADORES);
 
+            // Se respeta el color que eligió el usuario mientras siga libre; si no, el primero libre.
             var libres = control.coloresDisponibles();
-            if (!libres.isEmpty()) {
+            String elegido = (String) cmbColor.getSelectedItem();
+            if (!libres.isEmpty() && libres.stream().noneMatch(c -> c.name().equals(elegido))) {
                 cmbColor.setSelectedItem(libres.get(0).name());
+            }
+            // Si alguien salió de la sala y ya hay lugar, se puede volver a registrar.
+            if (!control.salaLlena()) {
+                btnRegistrar.setEnabled(true);
             }
         }
 
