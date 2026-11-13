@@ -20,10 +20,23 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>Sala</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <!-- La fachada real guarda el perfil en MySQL: las pruebas leen Config/config.properties (no se sube a GitHub). -->
+        <testResources>
+            <testResource>
+                <directory>${project.basedir}/../Config</directory>
+            </testResource>
+        </testResources>
+    </build>
     <properties>
         <exec.mainClass>mx.itson.parchis.fabricarsala.FabricarSala</exec.mainClass>
     </properties>

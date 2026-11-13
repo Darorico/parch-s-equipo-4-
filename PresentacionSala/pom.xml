@@ -21,20 +21,25 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>FabricaSala</artifactId>
+            <artifactId>FabricarSala</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
-        <dependency>
-            <groupId>mx.itson.parchis</groupId>
-            <artifactId>FabricarSala</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <type>jar</type>
-        </dependency>
     </dependencies>
+    <build>
+        <!-- La fachada real lee la conexión a MySQL de Config/config.properties (no se sube a GitHub). -->
+        <resources>
+            <resource>
+                <directory>${project.basedir}/src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>${project.basedir}/../Config</directory>
+            </resource>
+        </resources>
+    </build>
     <properties>
         <exec.mainClass>mx.itson.parchis.presentacion.Main</exec.mainClass>
     </properties>

@@ -15,10 +15,11 @@
         <module>DTOs</module>
         <module>InterfacesSala</module>
         <module>SalaMock</module>
+        <module>Perfil</module>
+        <module>Sala</module>
         <module>FabricarSala</module>
         <module>PresentacionSala</module>
         <module>ComunicacionP2P</module>
-        <module>Perfil</module>
     </modules>
 
     <properties>
@@ -46,7 +47,17 @@
             </dependency>
             <dependency>
                 <groupId>mx.itson.parchis</groupId>
-                <artifactId>FabricaSala</artifactId>
+                <artifactId>Perfil</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mx.itson.parchis</groupId>
+                <artifactId>Sala</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mx.itson.parchis</groupId>
+                <artifactId>FabricarSala</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

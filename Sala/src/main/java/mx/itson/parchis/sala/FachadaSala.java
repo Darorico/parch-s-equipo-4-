@@ -1,0 +1,100 @@
+package mx.itson.parchis.sala;
+
+import java.util.List;
+import mx.itson.parchis.bos.PerfilBO;
+import mx.itson.parchis.dtos.JugadorDTO;
+import mx.itson.parchis.interfaces.IFachadaSala;
+import mx.itson.parchis.interfaces.SalaException;
+import mx.itson.parchis.interfaces.SalaException.Motivo;
+
+/**
+ * Implementación real del subsistema Sala (CU-01 Registrar jugador).
+ *
+ * Las reglas de la sala (A1, A2, A3) se revisan en memoria con la entidad Sala.
+ * Si el registro es válido, el perfil del jugador se guarda en MySQL con PerfilBO
+ * y después el jugador entra a la sala. Si guardar el perfil falla, la sala no cambia.
+ *
+ * Los métodos son synchronized porque la comunicación P2P puede registrar jugadores
+ * desde otro hilo al mismo tiempo que la pantalla.
+ */
+public class FachadaSala implements IFachadaSala {
+
+    /** Mismo límite que la columna nombre de la tabla perfil. */
+    static final int NOMBRE_MAX = 50;
+
+    private final Sala sala = new Sala();
+    private final PerfilBO perfilBO;
+
+    /** Usa el PerfilBO con PerfilDAOMySQL (lee Config/config.properties). */
+    public FachadaSala() {
+        this(new PerfilBO());
+    }
+
+    public FachadaSala(PerfilBO perfilBO) {
+        this.perfilBO = perfilBO;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws IllegalStateException si no se pudo guardar el perfil en la base de datos
+     */
+    @Override
+    public synchronized JugadorDTO registrarJugador(JugadorDTO jugador) throws SalaException {
+        validarDatos(jugador);
+        String nombre = jugador.getNombre().trim();
+
+        // A3: ya no cabe nadie
+        if (sala.estaLlena()) {
+            throw new SalaException(Motivo.SALA_LLENA,
+                    "La sala ya está llena (" + MAX_JUGADORES + " jugadores).");
+        }
+        // A2: el nombre ya lo usa otro jugador
+        if (!sala.nombreDisponible(nombre)) {
+            throw new SalaException(Motivo.NOMBRE_REPETIDO,
+                    "El nombre \"" + nombre + "\" ya está en uso. Elige otro.");
+        }
+        // A3: el color ya lo usa otro jugador
+        if (!sala.colorDisponible(jugador.getColor())) {
+            throw new SalaException(Motivo.COLOR_OCUPADO,
+                    "El color " + jugador.getColor() + " ya está ocupado. Elige otro.");
+        }
+
+        Jugador nuevo = new Jugador(nombre, jugador.getColor(), jugador.getAvatar());
+        guardarPerfil(nuevo.aDTO());
+        sala.agregarJugador(nuevo);
+        return nuevo.aDTO();
+    }
+
+    @Override
+    public synchronized List<JugadorDTO> obtenerJugadores() {
+        return sala.getJugadores().stream().map(Jugador::aDTO).toList();
+    }
+
+    /** A1: falta el nombre o el color, o no cumplen lo que acepta la tabla perfil. */
+    private void validarDatos(JugadorDTO jugador) throws SalaException {
+        if (jugador == null || jugador.getNombre() == null || jugador.getNombre().isBlank()
+                || jugador.getColor() == null) {
+            throw new SalaException(Motivo.DATOS_INCOMPLETOS, "Escribe tu nombre y elige un color.");
+        }
+        if (jugador.getNombre().trim().length() > NOMBRE_MAX) {
+            throw new SalaException(Motivo.DATOS_INCOMPLETOS,
+                    "El nombre puede tener máximo " + NOMBRE_MAX + " caracteres.");
+        }
+        if (jugador.getAvatar() < 0) {
+            throw new SalaException(Motivo.DATOS_INCOMPLETOS, "Elige un avatar.");
+        }
+    }
+
+    /**
+     * El perfil es del jugador, no de la sala: si ya jugó antes con ese nombre,
+     * se actualizan su color y avatar en lugar de rechazarlo.
+     */
+    private void guardarPerfil(JugadorDTO perfil) {
+        if (perfilBO.obtenerPorNombre(perfil.getNombre()) == null) {
+            perfilBO.registrar(perfil);
+        } else {
+            perfilBO.actualizar(perfil);
+        }
+    }
+}
