@@ -8,14 +8,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import mx.itson.parchis.dtos.ColorFicha;
 import mx.itson.parchis.dtos.JugadorDTO;
 import mx.itson.parchis.interfaces.SalaException;
+import mx.itson.parchis.fabricarsala.FabricaSala;
 import mx.itson.parchis.interfaces.SalaException.Motivo;
-import mx.itson.parchis.sala.mock.FachadaSalaMock;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 /**
- * Pruebas del controlador. Usan el mock en memoria para no depender de MySQL:
- * la fachada real ya se prueba en FachadaSalaTest.
+ * Pruebas del controlador. Le piden a la fábrica el modo mock para no depender de MySQL
+ * (la fachada real ya se prueba en FachadaSalaTest). Igual que la app, el controlador
+ * obtiene la fachada solo por medio de la fábrica.
  */
 class ControlSalaTest {
 
@@ -23,7 +25,13 @@ class ControlSalaTest {
 
     @BeforeEach
     void preparar() {
-        control = new ControlSala(new FachadaSalaMock());
+        System.setProperty(FabricaSala.PROPIEDAD_MODO, FabricaSala.MODO_MOCK);
+        control = new ControlSala();
+    }
+
+    @AfterEach
+    void limpiarPropiedad() {
+        System.clearProperty(FabricaSala.PROPIEDAD_MODO);
     }
 
     @Test
